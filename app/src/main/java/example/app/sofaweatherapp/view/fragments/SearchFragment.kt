@@ -5,14 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import example.app.sofaweatherapp.databinding.FragmentHomeBinding
+import example.app.sofaweatherapp.databinding.FragmentSearchBinding
 
-class HomeFragment : Fragment() {
+class SearchFragment : Fragment() {
 
-    private var _binding: FragmentHomeBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
+    private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -20,10 +17,11 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
 
         return binding.root
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
