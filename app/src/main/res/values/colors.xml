@@ -11,6 +11,7 @@
     <color name="surface_surface_2">#66e5e9ef</color>
     <color name="status_success">#12ca5d</color>
     <color name="status_error">#ff4848</color>
+    <color name="status_error_snackbar">#c7361f</color>
     <color name="elevation_elevation_1">#19000000</color>
     <color name="elevation_elevation_2">#33000000</color>
     <color name="overlay">#331c1f22</color>

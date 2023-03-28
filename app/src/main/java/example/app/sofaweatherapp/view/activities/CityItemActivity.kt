@@ -16,14 +16,14 @@ import example.app.sofaweatherapp.model.WeatherCurrent
 import example.app.sofaweatherapp.utils.Constants
 import example.app.sofaweatherapp.utils.UtilityFunctions
 import example.app.sofaweatherapp.view.adapters.WeatherRecyclerAdapter
-import example.app.sofaweatherapp.viewmodel.CitiesViewModel
+import example.app.sofaweatherapp.viewmodel.ForecastViewModel
 import kotlin.math.roundToInt
 
 class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClickListener {
 
     private lateinit var binding: ActivityCityItemBinding
     private var locationName: String = ""
-    private val citiesViewModel: CitiesViewModel by viewModels()
+    private val citiesViewModel: ForecastViewModel by viewModels()
     private lateinit var todayWeatherRecyclerAdapter: WeatherRecyclerAdapter
     private lateinit var nextDaysWeatherRecyclerAdapter: WeatherRecyclerAdapter
 
@@ -35,6 +35,7 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowTitleEnabled(true)
 
         todayWeatherRecyclerAdapter =
             WeatherRecyclerAdapter(this, mutableListOf(), this)
@@ -52,11 +53,7 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
             intent.getSerializableExtra(getString(R.string.location_key)) as String
         }
 
-        if (locationName != "")
-            citiesViewModel.searchForecast(locationName, 7)
-        else
-            finish()
-
+        citiesViewModel.searchForecast(locationName, 7)
 
         setListeners()
     }
@@ -73,7 +70,7 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
         }
 
         citiesViewModel.forecastResponseError.observe(this) { err ->
-            println("a")
+            UtilityFunctions.showErrorSnackBar(binding.root, null, err.message, this)
         }
 
         binding.appbarlayout.addOnOffsetChangedListener(object :
@@ -81,12 +78,15 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
             var isShow: Boolean? = null
             var scrollRange: Int = -1
 
+            //Vertical offset -10, -50,
+            //Total scroll range -201
             override fun onOffsetChanged(appBarLayout: AppBarLayout?, verticalOffset: Int) {
                 if (scrollRange == -1) {
                     scrollRange = appBarLayout!!.totalScrollRange
                 }
-                if (scrollRange + verticalOffset == 0) {
-                    binding.toolbar.title = locationName
+                if (scrollRange + verticalOffset <= 0) {
+                    if (binding.toolbar.title != locationName)
+                        binding.toolbar.title = locationName
                     isShow = true
                 } else if (isShow == true) {
                     binding.toolbar.title = ""
@@ -101,7 +101,7 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
         weatherCurrent: WeatherCurrent
     ) {
         binding.apply {
-            cityName.text = locationData.name
+            cityName.text = locationName
 
             weatherInfo.apply {
                 val dateTime = UtilityFunctions.epochToDateTimeAtTimeZone(

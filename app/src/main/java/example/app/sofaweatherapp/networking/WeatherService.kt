@@ -8,7 +8,7 @@ import retrofit2.http.Query
 interface WeatherService {
 
     @GET("v1/search.json")
-    suspend fun searchCity(@Query("key") key: String, @Query("q") query: String): List<Location>
+    suspend fun searchCity(@Query("key") key: String, @Query("q") query: String): List<Location>?
 
     @GET("v1/forecast.json")
     suspend fun searchForecast(

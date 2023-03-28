@@ -20,4 +20,13 @@
 
     </style>
 
+    <style name="CustomSnackbarTheme">
+        <item name="snackbarStyle">@style/MySnackBarStyle</item>
+    </style>
+
+    <style name="MySnackBarStyle" parent="Widget.MaterialComponents.Snackbar">
+        <item name="android:background">@drawable/my_snackbar_background</item>
+        <item name="android:layout_margin">32dp</item>
+    </style>
+
 </resources>

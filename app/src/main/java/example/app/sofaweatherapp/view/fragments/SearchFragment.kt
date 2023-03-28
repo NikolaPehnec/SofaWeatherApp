@@ -3,6 +3,7 @@ package example.app.sofaweatherapp.view.fragments
 import android.R.layout
 import android.content.Intent
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,7 @@ import androidx.fragment.app.activityViewModels
 import example.app.sofaweatherapp.R
 import example.app.sofaweatherapp.databinding.FragmentSearchBinding
 import example.app.sofaweatherapp.model.Location
+import example.app.sofaweatherapp.utils.UtilityFunctions
 import example.app.sofaweatherapp.view.activities.CityItemActivity
 import example.app.sofaweatherapp.viewmodel.CitiesViewModel
 
@@ -39,10 +41,16 @@ class SearchFragment : Fragment() {
         return binding.root
     }
 
+
     private fun setListeners() {
         citiesViewModel.citiesList.observe(viewLifecycleOwner) { locationList ->
             if (locationList.isEmpty()) {
-                binding.autoCompleteTv.error = getString(R.string.no_location_mess)
+                UtilityFunctions.showErrorSnackBar(
+                    binding.root,
+                    binding.anchorView,
+                    getString(R.string.no_location_mess),
+                    requireContext()
+                )
             } else {
                 binding.autoCompleteTv.error = null
 
@@ -53,7 +61,6 @@ class SearchFragment : Fragment() {
                         added = true
                     }
                 }
-
                 //Forcing the textView to show new suggestions
                 if (added) {
                     binding.autoCompleteTv.apply {
@@ -65,6 +72,15 @@ class SearchFragment : Fragment() {
             }
         }
 
+        citiesViewModel.citiesResponseError.observe(viewLifecycleOwner) { err ->
+            UtilityFunctions.showErrorSnackBar(
+                binding.root,
+                binding.anchorView,
+                err.message,
+                requireContext()
+            )
+        }
+
         binding.autoCompleteTv.apply {
             addTextChangedListener {
                 if (it.toString().length > 2) {
@@ -72,17 +88,18 @@ class SearchFragment : Fragment() {
                 }
             }
 
+            //When returning from activity, can press ok for dropdown menu
+            setOnKeyListener { _, keyCode, event ->
+                if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
+                    showDropDown()
+                    return@setOnKeyListener true
+                }
+                return@setOnKeyListener false
+            }
+
             setOnItemClickListener { _, _, position, _ ->
                 startCityItemActivity(adapter.getItem(position).toString())
             }
-
-            /*setOnEditorActionListener { v, actionId, event ->
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    startCityItemActivity(this.text.toString())
-                }
-
-                return@setOnEditorActionListener true
-            }*/
         }
     }
 
