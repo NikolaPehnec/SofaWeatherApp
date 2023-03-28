@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import coil.load
 import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.snackbar.Snackbar
 import example.app.sofaweatherapp.R
 import example.app.sofaweatherapp.databinding.ActivityCityItemBinding
 import example.app.sofaweatherapp.model.ForecastDay
@@ -16,6 +17,7 @@ import example.app.sofaweatherapp.model.WeatherCurrent
 import example.app.sofaweatherapp.utils.Constants
 import example.app.sofaweatherapp.utils.UtilityFunctions
 import example.app.sofaweatherapp.view.adapters.WeatherRecyclerAdapter
+import example.app.sofaweatherapp.view.fragments.MapsFragment
 import example.app.sofaweatherapp.viewmodel.ForecastViewModel
 import kotlin.math.roundToInt
 
@@ -23,6 +25,7 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
 
     private lateinit var binding: ActivityCityItemBinding
     private var locationName: String = ""
+    private var locationNameApi: String = ""
     private val citiesViewModel: ForecastViewModel by viewModels()
     private lateinit var todayWeatherRecyclerAdapter: WeatherRecyclerAdapter
     private lateinit var nextDaysWeatherRecyclerAdapter: WeatherRecyclerAdapter
@@ -58,10 +61,22 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
         setListeners()
     }
 
+    private fun launchMapFragment(lat: Double, long: Double, title: String) {
+        supportFragmentManager.beginTransaction()
+            .replace(binding.mapFrameLayout.id, MapsFragment().newInstance(lat, long, title))
+            .commit()
+    }
+
     private fun setListeners() {
         citiesViewModel.forecastResponseData.observe(this) { forecastData ->
             fillBasicInformation(forecastData.location, forecastData.current)
             fillWeatherFeatures(forecastData.current, forecastData.forecast.forecastday)
+
+            launchMapFragment(
+                forecastData.location.lat,
+                forecastData.location.lon,
+                forecastData.location.name
+            )
 
             if (forecastData.forecast.forecastday.isNotEmpty()) {
                 todayWeatherRecyclerAdapter.addItems(forecastData.forecast.forecastday[0].hour)
@@ -69,31 +84,41 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
             }
         }
 
+        // Show error, finish actvitiy
         citiesViewModel.forecastResponseError.observe(this) { err ->
-            UtilityFunctions.showErrorSnackBar(binding.root, null, err.message, this)
+            UtilityFunctions.makeErrorSnackBar(binding.root, null, err.message, this)
+                .addCallback(object : Snackbar.Callback() {
+                    override fun onDismissed(snackbar: Snackbar, event: Int) {
+                        super.onDismissed(snackbar, event)
+                        finish()
+                    }
+                }).show()
         }
 
-        binding.appbarlayout.addOnOffsetChangedListener(object :
-            AppBarLayout.OnOffsetChangedListener {
-            var isShow: Boolean? = null
-            var scrollRange: Int = -1
+        binding.appbarlayout.addOnOffsetChangedListener(
+            object :
+                AppBarLayout.OnOffsetChangedListener {
+                var isShow: Boolean? = null
+                var scrollRange: Int = -1
 
-            //Vertical offset -10, -50,
-            //Total scroll range -201
-            override fun onOffsetChanged(appBarLayout: AppBarLayout?, verticalOffset: Int) {
-                if (scrollRange == -1) {
-                    scrollRange = appBarLayout!!.totalScrollRange
-                }
-                if (scrollRange + verticalOffset <= 0) {
-                    if (binding.toolbar.title != locationName)
-                        binding.toolbar.title = locationName
-                    isShow = true
-                } else if (isShow == true) {
-                    binding.toolbar.title = ""
-                    isShow = false
+                // Vertical offset -10, -50,
+                // Total scroll range -201
+                override fun onOffsetChanged(appBarLayout: AppBarLayout?, verticalOffset: Int) {
+                    if (scrollRange == -1) {
+                        scrollRange = appBarLayout!!.totalScrollRange
+                    }
+                    if (scrollRange + verticalOffset <= 0) {
+                        if (binding.toolbar.title != locationNameApi) {
+                            binding.toolbar.title = locationNameApi
+                        }
+                        isShow = true
+                    } else if (isShow == true) {
+                        binding.toolbar.title = ""
+                        isShow = false
+                    }
                 }
             }
-        })
+        )
     }
 
     private fun fillBasicInformation(
@@ -101,7 +126,8 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
         weatherCurrent: WeatherCurrent
     ) {
         binding.apply {
-            cityName.text = locationName
+            locationNameApi = locationData.name
+            cityName.text = locationNameApi
 
             weatherInfo.apply {
                 val dateTime = UtilityFunctions.epochToDateTimeAtTimeZone(
@@ -157,7 +183,7 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
                     getString(R.string.visibility_unit)
                 )
             )
-            //Didnt find accuracy attribute
+            // Didnt find accuracy attribute
             featureAccuracy.setValue(
                 getString(
                     R.string.accuracy_value,
@@ -165,7 +191,7 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
                     getString(R.string.accuracy_unit)
                 )
             )
-            //Min, max value only in day forecasts
+            // Min, max value only in day forecasts
             if (forecastDays.isNotEmpty()) {
                 val minTemp = forecastDays[0].day.mintemp_c.toInt().toString()
                 val maxTemp = forecastDays[0].day.maxtemp_c.toInt().toString()
@@ -173,11 +199,13 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
                 featureTemp.setValue(
                     getString(
                         R.string.temp_min_max_value,
-                        minTemp, unit, maxTemp, unit
+                        minTemp,
+                        unit,
+                        maxTemp,
+                        unit
                     )
                 )
             }
-
         }
     }
 

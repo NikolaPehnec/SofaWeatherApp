@@ -13,17 +13,20 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-
 object UtilityFunctions {
-    //private val sdf = SimpleDateFormat("E, MMMM dd|HH:mm aa (zz)", Locale.US)
+    // private val sdf = SimpleDateFormat("E, MMMM dd|HH:mm aa (zz)", Locale.US)
     private val sdfday = SimpleDateFormat("EE", Locale.US)
     private val dtf = DateTimeFormatter.ofPattern("EE, MMM dd|HH:mm a").withLocale(Locale.US)
 
-
-    fun showErrorSnackBar(view: View, anchorView: View?, message: String, context: Context) {
+    fun makeErrorSnackBar(
+        view: View,
+        anchorView: View?,
+        message: String,
+        context: Context
+    ): Snackbar {
         val ctw = ContextThemeWrapper(context, R.style.CustomSnackbarTheme)
 
-        Snackbar.make(
+        return Snackbar.make(
             ctw,
             view,
             message,
@@ -34,9 +37,8 @@ object UtilityFunctions {
             AppCompatResources.getDrawable(context, R.drawable.ic_baseline_close_24)!!,
             ContextCompat.getColor(context, R.color.on_color)
         ).setTextColor(ContextCompat.getColor(context, R.color.on_color))
-            .setAnchorView(anchorView).show()
+            .setAnchorView(anchorView)
     }
-
 
     fun epochToDateTimeAtTimeZone(epochSeconds: Long, timeZone: String): String {
         val dateTime = Instant.ofEpochMilli(epochSeconds * 1000)
@@ -46,6 +48,4 @@ object UtilityFunctions {
     }
 
     fun getNameOfDayFromDate(epochSeconds: Long): String = sdfday.format(Date(epochSeconds * 1000))
-
-
 }

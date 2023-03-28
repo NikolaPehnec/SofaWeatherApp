@@ -18,7 +18,6 @@ class ForecastViewModel : ViewModel() {
     private val _forecastResponseError = MutableLiveData<Error>()
     val forecastResponseError: LiveData<Error> = _forecastResponseError
 
-
     fun searchForecast(locationName: String, numOfDays: Int) {
         viewModelScope.launch {
             try {
@@ -26,7 +25,6 @@ class ForecastViewModel : ViewModel() {
                     Network().getService()
                         .searchForecast(Constants.API_KEY, locationName, numOfDays)
                 searchResponse.let {
-
                     it.error?.let { err ->
                         _forecastResponseError.value = err
                     }
@@ -44,5 +42,4 @@ class ForecastViewModel : ViewModel() {
             }
         }
     }
-
 }

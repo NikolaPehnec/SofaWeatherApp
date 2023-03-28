@@ -1,6 +1,5 @@
 package example.app.sofaweatherapp.model
 
-
 data class ForecastResponse(
     val error: Error?,
     val location: LocationDetail?,
@@ -20,8 +19,8 @@ data class LocationDetail(
     val country: String,
     val tz_id: String,
     val localtime_epoch: Long,
-    val lat: Float,
-    val long: Float
+    val lat: Double,
+    val lon: Double
 )
 
 data class Forecast(

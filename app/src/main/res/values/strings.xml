@@ -10,6 +10,7 @@
 
     <string name="no_location_mess">No locations found</string>
     <string name="img_missing_err">Weather feature imageView must contain drawable</string>
+    <string name="err_search_small">Minimum num of chars: 3</string>
 
     <string name="today_label">Today</string>
     <string name="next_days_label">Next 7 days</string>
@@ -20,6 +21,7 @@
     <string name="pressure_title">PRESSURE</string>
     <string name="visibility_title">VISIBILITY</string>
     <string name="accuracy_title">ACCURACY</string>
+    <string name="view_more">VIEW MORE</string>
 
     <string name="temp_unit">°</string>
     <string name="temp_value">%1$s%2$s</string>

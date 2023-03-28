@@ -11,7 +11,7 @@ data class WeatherCurrent(
     val wind_mph: Float,
     val wind_kph: Float,
     val wind_dir: String,
-    val humidity: Int,
+    val humidity: Int
 )
 
 data class WeatherDay(
@@ -29,7 +29,7 @@ data class WeatherHour(
     val time_epoch: Long,
     val temp_c: Float,
     val temp_f: Float,
-    val condition: Condition,
+    val condition: Condition
 )
 
 data class Condition(

@@ -27,12 +27,15 @@ class SearchFragment : Fragment() {
     private val searchedLocations = mutableSetOf<Location>()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
 
         searchArrayAdapter = ArrayAdapter(
-            requireContext(), layout.simple_list_item_1
+            requireContext(),
+            layout.simple_list_item_1
         )
         binding.autoCompleteTv.setAdapter(searchArrayAdapter)
 
@@ -41,16 +44,15 @@ class SearchFragment : Fragment() {
         return binding.root
     }
 
-
     private fun setListeners() {
         citiesViewModel.citiesList.observe(viewLifecycleOwner) { locationList ->
             if (locationList.isEmpty()) {
-                UtilityFunctions.showErrorSnackBar(
+                UtilityFunctions.makeErrorSnackBar(
                     binding.root,
                     binding.anchorView,
                     getString(R.string.no_location_mess),
                     requireContext()
-                )
+                ).show()
             } else {
                 binding.autoCompleteTv.error = null
 
@@ -61,24 +63,24 @@ class SearchFragment : Fragment() {
                         added = true
                     }
                 }
-                //Forcing the textView to show new suggestions
+                // Forcing the textView to show new suggestions
+                searchedLocations.addAll(locationList)
                 if (added) {
                     binding.autoCompleteTv.apply {
                         text = text
                         setSelection(text.length)
                     }
                 }
-                searchedLocations.addAll(locationList)
             }
         }
 
         citiesViewModel.citiesResponseError.observe(viewLifecycleOwner) { err ->
-            UtilityFunctions.showErrorSnackBar(
+            UtilityFunctions.makeErrorSnackBar(
                 binding.root,
                 binding.anchorView,
                 err.message,
                 requireContext()
-            )
+            ).show()
         }
 
         binding.autoCompleteTv.apply {
@@ -88,10 +90,21 @@ class SearchFragment : Fragment() {
                 }
             }
 
-            //When returning from activity, can press ok for dropdown menu
+            // When returning from activity, can press ok for dropdown menu
             setOnKeyListener { _, keyCode, event ->
                 if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
-                    showDropDown()
+                    binding.autoCompleteTv.text.toString().apply {
+                        if (this.length > 2) {
+                            startCityItemActivity(this)
+                        } else {
+                            UtilityFunctions.makeErrorSnackBar(
+                                binding.root,
+                                binding.anchorView,
+                                getString(R.string.err_search_small),
+                                requireContext()
+                            ).show()
+                        }
+                    }
                     return@setOnKeyListener true
                 }
                 return@setOnKeyListener false

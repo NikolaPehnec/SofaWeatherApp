@@ -16,5 +16,4 @@ interface WeatherService {
         @Query("q") locationName: String,
         @Query("days") forecastDays: Int
     ): ForecastResponse
-
 }
