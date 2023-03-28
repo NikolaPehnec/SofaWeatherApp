@@ -33,7 +33,6 @@ class WeatherRecyclerAdapter(
     override fun onBindViewHolder(holder: ViewHolderWeather, position: Int) {
         holder.itemView.animation =
             AnimationUtils.loadAnimation(holder.itemView.context, R.anim.animation_recycler)
-
         holder.bind(items[position])
     }
 

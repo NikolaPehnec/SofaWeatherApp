@@ -2,9 +2,12 @@ package example.app.sofaweatherapp.view.activities
 
 import android.os.Build
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import coil.load
+import com.google.android.material.appbar.AppBarLayout
 import example.app.sofaweatherapp.R
 import example.app.sofaweatherapp.databinding.ActivityCityItemBinding
 import example.app.sofaweatherapp.model.ForecastDay
@@ -29,6 +32,9 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
 
         binding = ActivityCityItemBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         todayWeatherRecyclerAdapter =
             WeatherRecyclerAdapter(this, mutableListOf(), this)
@@ -69,6 +75,25 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
         citiesViewModel.forecastResponseError.observe(this) { err ->
             println("a")
         }
+
+        binding.appbarlayout.addOnOffsetChangedListener(object :
+            AppBarLayout.OnOffsetChangedListener {
+            var isShow: Boolean? = null
+            var scrollRange: Int = -1
+
+            override fun onOffsetChanged(appBarLayout: AppBarLayout?, verticalOffset: Int) {
+                if (scrollRange == -1) {
+                    scrollRange = appBarLayout!!.totalScrollRange
+                }
+                if (scrollRange + verticalOffset == 0) {
+                    binding.toolbar.title = locationName
+                    isShow = true
+                } else if (isShow == true) {
+                    binding.toolbar.title = ""
+                    isShow = false
+                }
+            }
+        })
     }
 
     private fun fillBasicInformation(
@@ -157,5 +182,30 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
     }
 
     override fun onItemClick(item: Any) {
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.city_menu, menu)
+
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> finish()
+            R.id.favorite -> changeFavorite(item)
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun changeFavorite(item: MenuItem) {
+        if (item.title!! == getString(R.string.favorite)) {
+            item.setIcon(R.drawable.ic_baseline_star_24)
+            item.title = getString(R.string.unfavorite)
+        } else {
+            item.setIcon(R.drawable.ic_baseline_star_outline_24)
+            item.title = getString(R.string.favorite)
+        }
     }
 }
