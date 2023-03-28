@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import example.app.sofaweatherapp.R
-import example.app.sofaweatherapp.databinding.WeatherFeatureBinding
+import example.app.sofaweatherapp.databinding.WeatherFeatureDetailBinding
 
 class WeatherFeature @JvmOverloads constructor(
     context: Context,
@@ -13,7 +13,7 @@ class WeatherFeature @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
-    private val binding: WeatherFeatureBinding = WeatherFeatureBinding.inflate(
+    private val binding: WeatherFeatureDetailBinding = WeatherFeatureDetailBinding.inflate(
         LayoutInflater.from(context),
         this,
         true
@@ -25,14 +25,13 @@ class WeatherFeature @JvmOverloads constructor(
                 binding.name.text = getString(R.styleable.WeatherFeature_name)
                 binding.value.text = getString(R.styleable.WeatherFeature_value)
                 binding.image.setImageDrawable(getDrawable(R.styleable.WeatherFeature_imgRes))
-                // binding.image.setImageResource(get(R.styleable.WeatherFeature_imgRes, 0))
-
-                /* if (getInt(R.styleable.WeatherFeature_imgRes, 0) == 0) {
-                     throw IllegalArgumentException(resources.getString(R.string.img_missing_err))
-                 }*/
             } finally {
                 recycle()
             }
         }
+    }
+
+    fun setValue(value: String) {
+        binding.value.text = value
     }
 }

@@ -7,8 +7,30 @@
     <string name="location_key">location_name</string>
 
     <string name="no_location_mess">No locations found</string>
-
     <string name="img_missing_err">Weather feature imageView must contain drawable</string>
 
+    <string name="today_label">Today</string>
+    <string name="next_days_label">Next 7 days</string>
+
+    <string name="temp_title">MIN / MAX</string>
+    <string name="wind_title">WIND</string>
+    <string name="humidity_title">HUMIDITY</string>
+    <string name="pressure_title">PRESSURE</string>
+    <string name="visibility_title">VISIBILITY</string>
+    <string name="accuracy_title">ACCURACY</string>
+
+    <string name="temp_unit">°</string>
+    <string name="temp_value">%1$s%2$s</string>
+    <string name="temp_min_max_value">%1$s%2$s / %3$s%4$s</string>
+    <string name="wind_value">%1$s %2$s (%3$s)</string>
+    <string name="wind_unit">km/h</string>
+    <string name="humidity_value">%1$s %2$s</string>
+    <string name="humidity_unit">%</string>
+    <string name="pressure_value">%1$s %2$s</string>
+    <string name="pressure_unit">hPa</string>
+    <string name="visibility_value">%1$s %2$s</string>
+    <string name="visibility_unit">km</string>
+    <string name="accuracy_value">%1$s %2$s</string>
+    <string name="accuracy_unit">%</string>
 
 </resources>

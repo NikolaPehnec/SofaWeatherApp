@@ -29,7 +29,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingBottom="24dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -43,20 +44,21 @@
                     style="@style/HeadlineLargeNLv1Left"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Zagreb"
+                    tools:text="Zagreb"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <include
                     android:id="@+id/weather_info"
-                    layout="@layout/city_current_weather_info"
+                    layout="@layout/weather_info"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toBottomOf="@+id/city_name" />
 
                 <include
-                    layout="@layout/city_current_weather_features"
+                    android:id="@+id/weather_features"
+                    layout="@layout/weather_features"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="@dimen/activity_vertical_margin"
@@ -79,7 +81,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="14dp"
-                    android:text="Today" />
+                    android:text="@string/today_label" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/today_weather_rv"
@@ -87,7 +89,9 @@
                     android:layout_height="112dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="44dp"
-                    android:layout_marginBottom="24dp" />
+                    android:layout_marginBottom="24dp"
+                    android:orientation="horizontal"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
@@ -103,7 +107,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="14dp"
-                    android:text="Next 7 days" />
+                    android:text="@string/next_days_label" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/next_days_weather_rv"
@@ -111,7 +115,9 @@
                     android:layout_height="112dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="44dp"
-                    android:layout_marginBottom="24dp" />
+                    android:layout_marginBottom="24dp"
+                    android:orientation="horizontal"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
             </androidx.cardview.widget.CardView>
 
 

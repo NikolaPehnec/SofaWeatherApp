@@ -12,8 +12,7 @@
         app:layout_constraintEnd_toStartOf="@+id/featureWind"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:name="MIN / MAX"
-        app:value="19° / 25°" />
+        app:name="@string/temp_title" />
 
     <example.app.sofaweatherapp.view.customviews.WeatherFeature
         android:id="@+id/featureWind"
@@ -23,8 +22,7 @@
         app:layout_constraintEnd_toStartOf="@+id/featureHumidty"
         app:layout_constraintStart_toEndOf="@id/featureTemp"
         app:layout_constraintTop_toTopOf="parent"
-        app:name="WIND"
-        app:value="value" />
+        app:name="@string/wind_title" />
 
     <example.app.sofaweatherapp.view.customviews.WeatherFeature
         android:id="@+id/featureHumidty"
@@ -34,8 +32,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/featureWind"
         app:layout_constraintTop_toTopOf="parent"
-        app:name="HUMIDITY"
-        app:value="value" />
+        app:name="@string/humidity_title" />
 
     <example.app.sofaweatherapp.view.customviews.WeatherFeature
         android:id="@+id/featurePressure"
@@ -45,29 +42,26 @@
         app:layout_constraintEnd_toStartOf="@+id/featureVisibility"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/featureTemp"
-        app:name="PRESSURE"
-        app:value="value" />
+        app:name="@string/pressure_title" />
 
     <example.app.sofaweatherapp.view.customviews.WeatherFeature
         android:id="@+id/featureVisibility"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:imgRes="@drawable/icons_android_ic_visibility"
-        app:layout_constraintEnd_toStartOf="@+id/weatherFeature"
+        app:layout_constraintEnd_toStartOf="@+id/featureAccuracy"
         app:layout_constraintStart_toEndOf="@id/featurePressure"
         app:layout_constraintTop_toBottomOf="@+id/featureWind"
-        app:name="HUMIDITY"
-        app:value="value" />
+        app:name="@string/visibility_title" />
 
     <example.app.sofaweatherapp.view.customviews.WeatherFeature
-        android:id="@+id/weatherFeature"
+        android:id="@+id/featureAccuracy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:imgRes="@drawable/icons_android_ic_accuracy"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/featureVisibility"
         app:layout_constraintTop_toBottomOf="@+id/featureHumidty"
-        app:name="ACCURACY"
-        app:value="value" />
+        app:name="@string/accuracy_title" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

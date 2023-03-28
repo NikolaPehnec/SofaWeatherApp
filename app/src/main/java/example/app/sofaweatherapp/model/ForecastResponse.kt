@@ -41,11 +41,14 @@ data class WeatherCurrent(
     val condition: Condition,
     val temp_c: Float,
     val temp_f: Float,
-    val pressure_mb: Float,
+    val pressure_mb: Int,
     val pressure_in: Float,
     val vis_km: Int,
     val vis_miles: Int,
-    val humidty: Int,
+    val wind_mph: Float,
+    val wind_kph: Float,
+    val wind_dir: String,
+    val humidity: Int,
 )
 
 data class WeatherHour(
