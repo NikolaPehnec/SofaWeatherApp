@@ -30,6 +30,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/surface_none"
+                android:completionThreshold="1"
                 android:drawableStart="@drawable/ic_baseline_search_24"
                 android:drawablePadding="16dp"
                 android:drawableTint="@color/neutrals_n_lv_2"

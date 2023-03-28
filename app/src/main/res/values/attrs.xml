@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="WeatherFeature">
+        <attr name="name" format="string" />
+        <attr name="value" format="string" />
+        <attr name="imgRes" format="reference|color" />
+    </declare-styleable>
+
+</resources>
