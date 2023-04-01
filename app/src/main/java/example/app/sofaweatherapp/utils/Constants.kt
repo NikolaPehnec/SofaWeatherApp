@@ -7,4 +7,6 @@ object Constants {
     const val MAPS_LAT = "map_location_lat"
     const val MAPS_LONG = "map_location_long"
     const val MAPS_TITLE = "map_title"
+    const val NUM_OF_FORECAST_DAYS = 7
+
 }

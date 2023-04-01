@@ -56,7 +56,7 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
             intent.getSerializableExtra(getString(R.string.location_key)) as String
         }
 
-        citiesViewModel.searchForecast(locationName, 7)
+        citiesViewModel.searchForecast(locationName)
 
         setListeners()
     }
@@ -86,7 +86,7 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
 
         // Show error, finish actvitiy
         citiesViewModel.forecastResponseError.observe(this) { err ->
-            UtilityFunctions.makeErrorSnackBar(binding.root, null, err.message, this)
+            UtilityFunctions.makeErrorSnackBar(binding.root, null, err, this)
                 .addCallback(object : Snackbar.Callback() {
                     override fun onDismissed(snackbar: Snackbar, event: Int) {
                         super.onDismissed(snackbar, event)

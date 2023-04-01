@@ -1,6 +1,7 @@
 package example.app.sofaweatherapp.view.activities
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
@@ -21,5 +22,10 @@ class MainActivity : AppCompatActivity() {
         val bottomNavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
         bottomNavigationView.setupWithNavController(navController)
+    }
+
+    override fun onDestroy() {
+        Log.e("DESTROY", "Researching")
+        super.onDestroy()
     }
 }

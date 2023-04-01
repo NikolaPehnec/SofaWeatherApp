@@ -7,7 +7,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class Network {
-    private val service: WeatherService
+    private val service: WeatherServiceApi
 
     fun getService() = service
 
@@ -20,6 +20,6 @@ class Network {
             .baseUrl(Constants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(httpClient).build()
-        service = retrofit.create(WeatherService::class.java)
+        service = retrofit.create(WeatherServiceApi::class.java)
     }
 }

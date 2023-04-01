@@ -1,11 +1,5 @@
 package example.app.sofaweatherapp.model
 
-data class ForecastResponse(
-    val error: Error?,
-    val location: LocationDetail?,
-    val forecast: Forecast?,
-    val current: WeatherCurrent?
-)
 
 data class ForecastData(
     val location: LocationDetail,
@@ -34,7 +28,3 @@ data class ForecastDay(
     val hour: List<WeatherHour>
 )
 
-data class Error(
-    val code: Int,
-    val message: String
-)

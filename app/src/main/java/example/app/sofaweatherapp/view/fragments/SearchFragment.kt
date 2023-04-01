@@ -78,7 +78,7 @@ class SearchFragment : Fragment() {
             UtilityFunctions.makeErrorSnackBar(
                 binding.root,
                 binding.anchorView,
-                err.message,
+                err,
                 requireContext()
             ).show()
         }
@@ -115,14 +115,12 @@ class SearchFragment : Fragment() {
             }
         }
     }
-
     private fun startCityItemActivity(locationName: String) {
         val intent = Intent(requireContext(), CityItemActivity::class.java).apply {
             putExtra(getString(R.string.location_key), locationName)
         }
         startActivity(intent)
     }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

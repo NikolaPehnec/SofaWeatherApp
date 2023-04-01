@@ -6,7 +6,3 @@ data class Location(
     val region: String
 ) : java.io.Serializable
 
-data class SearchResponse(
-    val error: Error?,
-    val locations: List<Location>?
-)
