@@ -10,19 +10,22 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import dagger.hilt.android.AndroidEntryPoint
 import example.app.sofaweatherapp.R
 import example.app.sofaweatherapp.databinding.FragmentSearchBinding
 import example.app.sofaweatherapp.model.Location
+import example.app.sofaweatherapp.utils.Constants
 import example.app.sofaweatherapp.utils.UtilityFunctions
 import example.app.sofaweatherapp.view.activities.CityItemActivity
 import example.app.sofaweatherapp.viewmodel.CitiesViewModel
 
+@AndroidEntryPoint
 class SearchFragment : Fragment() {
 
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
-    private val citiesViewModel: CitiesViewModel by activityViewModels()
+    private val citiesViewModel: CitiesViewModel by viewModels()
     private lateinit var searchArrayAdapter: ArrayAdapter<String>
     private val searchedLocations = mutableSetOf<Location>()
 
@@ -85,7 +88,7 @@ class SearchFragment : Fragment() {
 
         binding.autoCompleteTv.apply {
             addTextChangedListener {
-                if (it.toString().length > 2) {
+                if (it.toString().length > Constants.SEARCH_TRESHOLD) {
                     citiesViewModel.searchCities(it.toString())
                 }
             }
@@ -115,12 +118,14 @@ class SearchFragment : Fragment() {
             }
         }
     }
+
     private fun startCityItemActivity(locationName: String) {
         val intent = Intent(requireContext(), CityItemActivity::class.java).apply {
             putExtra(getString(R.string.location_key), locationName)
         }
         startActivity(intent)
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

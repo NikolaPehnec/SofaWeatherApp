@@ -5,4 +5,3 @@ data class Location(
     val name: String,
     val region: String
 ) : java.io.Serializable
-

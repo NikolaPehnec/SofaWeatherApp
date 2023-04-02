@@ -4,8 +4,8 @@ import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.widget.TextView
 import androidx.annotation.ColorInt
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.R
+import com.google.android.material.snackbar.Snackbar
 
 fun Snackbar.setIcon(drawable: Drawable, @ColorInt colorTint: Int): Snackbar {
     return this.apply {

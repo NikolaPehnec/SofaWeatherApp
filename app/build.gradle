@@ -1,9 +1,27 @@
+buildscript {
+    configurations.all {
+        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+            if (details.requested.name == 'javapoet') {
+                details.useVersion '1.13.0'
+            }
+        }
+    }
+    dependencies {
+        classpath "com.squareup:javapoet:1.13.0"
+    }
+}
+
+
 plugins {
+
     id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
     id 'org.jlleitschuh.gradle.ktlint'
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
 }
+
+apply plugin: 'com.google.dagger.hilt.android'
 
 android {
     namespace 'example.app.sofaweatherapp'
@@ -39,10 +57,20 @@ android {
         debug.set(true)
         disabledRules.set(["no-wildcard-imports"])
     }
+    kotlin {
+        jvmToolchain {
+            languageVersion.set(JavaLanguageVersion.of(17))
+        }
+        // Or shorter:
+        jvmToolchain(17)
+    }
+}
+
+kapt {
+    correctErrorTypes true
 }
 
 dependencies {
-
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
@@ -60,4 +88,12 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:4.10.0'
     implementation 'io.coil-kt:coil:1.4.0'
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
+
+
+    implementation 'com.google.dagger:hilt-android:2.45'
+    annotationProcessor 'com.google.dagger:hilt-compiler:2.45'
+    kapt 'com.google.dagger:hilt-compiler:2.45'
+
+    implementation("com.squareup:javapoet:1.13.0")
+
 }

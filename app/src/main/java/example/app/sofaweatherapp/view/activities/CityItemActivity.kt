@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import coil.load
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import example.app.sofaweatherapp.R
 import example.app.sofaweatherapp.databinding.ActivityCityItemBinding
 import example.app.sofaweatherapp.model.ForecastDay
@@ -21,12 +22,13 @@ import example.app.sofaweatherapp.view.fragments.MapsFragment
 import example.app.sofaweatherapp.viewmodel.ForecastViewModel
 import kotlin.math.roundToInt
 
+@AndroidEntryPoint
 class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClickListener {
 
     private lateinit var binding: ActivityCityItemBinding
     private var locationName: String = ""
     private var locationNameApi: String = ""
-    private val citiesViewModel: ForecastViewModel by viewModels()
+    private val forecastViewModel: ForecastViewModel by viewModels()
     private lateinit var todayWeatherRecyclerAdapter: WeatherRecyclerAdapter
     private lateinit var nextDaysWeatherRecyclerAdapter: WeatherRecyclerAdapter
 
@@ -40,10 +42,8 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(true)
 
-        todayWeatherRecyclerAdapter =
-            WeatherRecyclerAdapter(this, mutableListOf(), this)
-        nextDaysWeatherRecyclerAdapter =
-            WeatherRecyclerAdapter(this, mutableListOf(), this)
+        todayWeatherRecyclerAdapter = WeatherRecyclerAdapter(this, mutableListOf(), this)
+        nextDaysWeatherRecyclerAdapter = WeatherRecyclerAdapter(this, mutableListOf(), this)
         binding.todayWeatherRv.adapter = todayWeatherRecyclerAdapter
         binding.nextDaysWeatherRv.adapter = nextDaysWeatherRecyclerAdapter
 
@@ -56,7 +56,7 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
             intent.getSerializableExtra(getString(R.string.location_key)) as String
         }
 
-        citiesViewModel.searchForecast(locationName)
+        forecastViewModel.searchForecast(locationName)
 
         setListeners()
     }
@@ -68,9 +68,9 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
     }
 
     private fun setListeners() {
-        citiesViewModel.forecastResponseData.observe(this) { forecastData ->
+        forecastViewModel.forecastResponseData.observe(this) { forecastData ->
             fillBasicInformation(forecastData.location, forecastData.current)
-            fillWeatherFeatures(forecastData.current, forecastData.forecast.forecastday)
+            fillWeatherFeatures(forecastData.current, forecastData.forecastDays)
 
             launchMapFragment(
                 forecastData.location.lat,
@@ -78,14 +78,14 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
                 forecastData.location.name
             )
 
-            if (forecastData.forecast.forecastday.isNotEmpty()) {
-                todayWeatherRecyclerAdapter.addItems(forecastData.forecast.forecastday[0].hour)
-                nextDaysWeatherRecyclerAdapter.addItems(forecastData.forecast.forecastday)
+            if (forecastData.forecastDays.isNotEmpty()) {
+                todayWeatherRecyclerAdapter.addItems(forecastData.forecastDays[0].hour)
+                nextDaysWeatherRecyclerAdapter.addItems(forecastData.forecastDays)
             }
         }
 
         // Show error, finish actvitiy
-        citiesViewModel.forecastResponseError.observe(this) { err ->
+        forecastViewModel.forecastResponseError.observe(this) { err ->
             UtilityFunctions.makeErrorSnackBar(binding.root, null, err, this)
                 .addCallback(object : Snackbar.Callback() {
                     override fun onDismissed(snackbar: Snackbar, event: Int) {
@@ -95,8 +95,7 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
                 }).show()
         }
 
-        binding.appbarlayout.addOnOffsetChangedListener(
-            object :
+        binding.appbarlayout.addOnOffsetChangedListener(object :
                 AppBarLayout.OnOffsetChangedListener {
                 var isShow: Boolean? = null
                 var scrollRange: Int = -1
@@ -117,8 +116,7 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
                         isShow = false
                     }
                 }
-            }
-        )
+            })
     }
 
     private fun fillBasicInformation(
@@ -138,12 +136,11 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
                 time.text = dateTime.split("|")[1]
 
                 conditionText.text = weatherCurrent.condition.text
-                temperature.text =
-                    getString(
-                        R.string.temp_value,
-                        weatherCurrent.temp_c.roundToInt().toString(),
-                        getString(R.string.temp_unit)
-                    )
+                temperature.text = getString(
+                    R.string.temp_value,
+                    weatherCurrent.temp_c.roundToInt().toString(),
+                    getString(R.string.temp_unit)
+                )
                 weatherImage.load(Constants.HTTPS_PREFIX + weatherCurrent.condition.icon)
             }
         }

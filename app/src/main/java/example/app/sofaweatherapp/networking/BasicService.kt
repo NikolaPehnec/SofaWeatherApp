@@ -3,7 +3,6 @@ package example.app.sofaweatherapp.networking
 import example.app.sofaweatherapp.model.Result
 import retrofit2.Response
 
-
 abstract class BasicService {
 
     protected suspend fun <T : Any> apiCall(call: suspend () -> Response<T>): Result<T> {
@@ -25,5 +24,4 @@ abstract class BasicService {
             }
         }
     }
-
 }
