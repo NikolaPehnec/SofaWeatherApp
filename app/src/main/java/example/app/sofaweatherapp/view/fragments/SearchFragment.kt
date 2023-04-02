@@ -93,7 +93,6 @@ class SearchFragment : Fragment() {
                 }
             }
 
-            // When returning from activity, can press ok for dropdown menu
             setOnKeyListener { _, keyCode, event ->
                 if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
                     binding.autoCompleteTv.text.toString().apply {

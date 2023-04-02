@@ -1,16 +1,19 @@
 package example.app.sofaweatherapp.viewmodel
 
-import android.content.Context
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import example.app.sofaweatherapp.model.Location
 import example.app.sofaweatherapp.model.Result
-import example.app.sofaweatherapp.networking.WeatherService
+import example.app.sofaweatherapp.networking.WeatherRepository
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CitiesViewModel @Inject constructor(val application: Context) : ViewModel() {
+class CitiesViewModel @Inject constructor(private val weatherRepository: WeatherRepository) :
+    ViewModel() {
     private val _citiesList = MutableLiveData<List<Location>>()
     val citiesList: LiveData<List<Location>> = _citiesList
 
@@ -20,8 +23,7 @@ class CitiesViewModel @Inject constructor(val application: Context) : ViewModel(
     fun searchCities(location: String) {
         viewModelScope.launch {
             when (
-                val result =
-                    WeatherService(application.applicationContext).searchCities(location)
+                val result = weatherRepository.searchCities(location)
             ) {
                 is Result.Success ->
                     _citiesList.value =

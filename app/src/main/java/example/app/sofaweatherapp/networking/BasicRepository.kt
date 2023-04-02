@@ -3,7 +3,7 @@ package example.app.sofaweatherapp.networking
 import example.app.sofaweatherapp.model.Result
 import retrofit2.Response
 
-abstract class BasicService {
+abstract class BasicRepository {
 
     protected suspend fun <T : Any> apiCall(call: suspend () -> Response<T>): Result<T> {
         val response: Response<T>

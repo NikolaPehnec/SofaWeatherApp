@@ -6,7 +6,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import example.app.sofaweatherapp.networking.WeatherService
+import example.app.sofaweatherapp.networking.WeatherServiceApi
 import example.app.sofaweatherapp.utils.Constants
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -25,7 +25,7 @@ class AppModule {
     }
 
     @Provides
-    fun provideApiService(): WeatherService {
+    fun provideApiService(): WeatherServiceApi {
         val interceptor = HttpLoggingInterceptor()
         interceptor.level = HttpLoggingInterceptor.Level.BASIC
         val httpClient = OkHttpClient.Builder().addInterceptor(interceptor).build()
@@ -34,10 +34,7 @@ class AppModule {
             .baseUrl(Constants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(httpClient).build()
-            .create(WeatherService::class.java)
+            .create(WeatherServiceApi::class.java)
     }
 
-    /* @Provides
-     fun provideViewModelFactory(application: Application): ViewModelProvider.Factory =
-         ViewModelFactory(application)*/
 }

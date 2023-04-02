@@ -10,6 +10,7 @@ import example.app.sofaweatherapp.utils.NetworkChecker
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
+import javax.inject.Inject
 
 interface WeatherServiceApi {
 
@@ -27,22 +28,33 @@ interface WeatherServiceApi {
     ): Response<WeatherApiData>
 }
 
-open class WeatherService(val context: Context) : BasicService() {
+
+open class WeatherRepository @Inject constructor(
+    val context: Context,
+    private val weatherServiceApi: WeatherServiceApi
+) : BasicRepository() {
+
 
     suspend fun searchCities(cityName: String): Result<List<Location>> =
-        apiCall(call = { Network().getService().searchCity(Constants.API_KEY, cityName) })
+        apiCall(call = { weatherServiceApi.searchCity(Constants.API_KEY, cityName) })
 
     suspend fun getForecast(location: String): Result<WeatherGeneralData> {
         return if (NetworkChecker(context).isOnline()) {
             apiCall(call = {
-                Network().getService()
-                    .searchForecast(Constants.API_KEY, location, Constants.NUM_OF_FORECAST_DAYS)
+                weatherServiceApi.searchForecast(
+                    Constants.API_KEY,
+                    location,
+                    Constants.NUM_OF_FORECAST_DAYS
+                )
             })
         } else {
             // Future DB Call
             apiCall(call = {
-                Network().getService()
-                    .searchForecast(Constants.API_KEY, location, Constants.NUM_OF_FORECAST_DAYS)
+                weatherServiceApi.searchForecast(
+                    Constants.API_KEY,
+                    location,
+                    Constants.NUM_OF_FORECAST_DAYS
+                )
             })
         }
     }
