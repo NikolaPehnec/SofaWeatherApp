@@ -1,4 +1,6 @@
 buildscript {
+    ext.kotlin_version = '1.6.10'
+
     configurations.all {
         resolutionStrategy.eachDependency { DependencyResolveDetails details ->
             if (details.requested.name == 'javapoet') {
