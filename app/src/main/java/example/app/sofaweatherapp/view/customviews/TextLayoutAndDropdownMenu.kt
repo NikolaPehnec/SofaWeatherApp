@@ -3,6 +3,7 @@ package example.app.sofaweatherapp.view.customviews
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.widget.AdapterView.OnItemClickListener
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import example.app.sofaweatherapp.R
@@ -30,6 +31,14 @@ class TextLayoutAndDropdownMenu @JvmOverloads constructor(
                     recycle()
                 }
             }
+
+        binding.autoCompleteTv.filters = emptyArray()
+    }
+
+    fun setText(text: String) {
+        binding.autoCompleteTv.apply {
+            setText(text, false)
+        }
     }
 
     fun setStringArrayAdapter(adapter: ArrayAdapter<String>) {
@@ -40,5 +49,7 @@ class TextLayoutAndDropdownMenu @JvmOverloads constructor(
         return binding.autoCompleteTv.text.toString()
     }
 
-
+    fun setOnItemClickListener(onItemClickListener: OnItemClickListener) {
+        binding.autoCompleteTv.onItemClickListener = onItemClickListener
+    }
 }

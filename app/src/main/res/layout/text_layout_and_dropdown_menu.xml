@@ -2,15 +2,17 @@
 <com.google.android.material.textfield.TextInputLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/textInputLayout"
-    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense.ExposedDropdownMenu"
+    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:boxBackgroundColor="@android:color/transparent">
+    app:boxBackgroundColor="@color/surface_surface_2">
 
     <AutoCompleteTextView
         android:id="@+id/auto_complete_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:completionThreshold="100"
+        android:hint="@string/language"
         android:inputType="none" />
 </com.google.android.material.textfield.TextInputLayout>
 

@@ -36,5 +36,4 @@ class AppModule {
             .client(httpClient).build()
             .create(WeatherServiceApi::class.java)
     }
-
 }

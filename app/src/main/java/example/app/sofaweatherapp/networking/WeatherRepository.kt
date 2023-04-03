@@ -28,12 +28,10 @@ interface WeatherServiceApi {
     ): Response<WeatherApiData>
 }
 
-
 open class WeatherRepository @Inject constructor(
     val context: Context,
     private val weatherServiceApi: WeatherServiceApi
 ) : BasicRepository() {
-
 
     suspend fun searchCities(cityName: String): Result<List<Location>> =
         apiCall(call = { weatherServiceApi.searchCity(Constants.API_KEY, cityName) })

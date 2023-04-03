@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_search">Traži</string>
+    <string name="title_favorites">Moji gradovi</string>
+    <string name="title_settings">Postavke</string>
+
+    <string name="search_hint">Traži gradove</string>
+
+    <string name="no_location_mess">Nema lokacija</string>
+    <string name="err_search_small">Mininmalni broj znakova: 3</string>
+
+    <string name="today_label">Danas</string>
+    <string name="next_days_label">Slijedećih 7 dana</string>
+
+    <string name="wind_title">VJETAR</string>
+    <string name="humidity_title">VLAGA</string>
+    <string name="pressure_title">PRITISAK</string>
+    <string name="visibility_title">VIDLJIVOST</string>
+    <string name="accuracy_title">PRECIZNOST</string>
+    <string name="view_more">VIDI JOŠ</string>
+
+    <string name="language">Jezik</string>
+    <string name="city">Grad</string>
+    <string name="settings">Postavke</string>
+
+    <string name="metric">Metrički</string>
+    <string name="imperial">Imperijalni</string>
+    <string-array name="languages">
+        <item>Engleski</item>
+        <item>Hrvatski</item>
+    </string-array>
+
+</resources>

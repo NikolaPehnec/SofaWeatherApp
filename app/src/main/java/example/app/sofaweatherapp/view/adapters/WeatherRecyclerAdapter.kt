@@ -20,7 +20,12 @@ class WeatherRecyclerAdapter(
 ) :
     RecyclerView.Adapter<WeatherRecyclerAdapter.ViewHolderWeather>() {
 
+    private var unit = ""
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderWeather {
+        unit = context.getSharedPreferences("MY_PREFERENCES", Context.MODE_PRIVATE).getString(
+            "UNIT",
+            "Metric"
+        )!!
         return ViewHolderWeather(
             WeatherItemDetailBinding.inflate(
                 LayoutInflater.from(parent.context),
@@ -59,21 +64,37 @@ class WeatherRecyclerAdapter(
                 is WeatherHour -> {
                     binding.title.text = item.time.split(" ")[1]
                     binding.image.load(Constants.HTTPS_PREFIX + item.condition.icon)
-                    binding.value.text = context.getString(
-                        R.string.temp_value,
-                        item.temp_c.toInt().toString(),
-                        context.getString(R.string.temp_unit)
-                    )
+                    if (unit == "Metric") {
+                        binding.value.text = context.getString(
+                            R.string.temp_value,
+                            item.temp_c.toInt().toString(),
+                            context.getString(R.string.temp_unit)
+                        )
+                    } else {
+                        binding.value.text = context.getString(
+                            R.string.temp_value,
+                            item.temp_f.toInt().toString(),
+                            context.getString(R.string.temp_unit_F)
+                        )
+                    }
                 }
 
                 is ForecastDay -> {
                     binding.title.text = UtilityFunctions.getNameOfDayFromDate(item.date_epoch)
                     binding.image.load(Constants.HTTPS_PREFIX + item.day.condition.icon)
-                    binding.value.text = context.getString(
-                        R.string.temp_value,
-                        item.day.avgtemp_c.toInt().toString(),
-                        context.getString(R.string.temp_unit)
-                    )
+                    if (unit == "Metric") {
+                        binding.value.text = context.getString(
+                            R.string.temp_value,
+                            item.day.avgtemp_c.toInt().toString(),
+                            context.getString(R.string.temp_unit)
+                        )
+                    } else {
+                        binding.value.text = context.getString(
+                            R.string.temp_value,
+                            item.day.avgtemp_f.toInt().toString(),
+                            context.getString(R.string.temp_unit_F)
+                        )
+                    }
                 }
             }
         }

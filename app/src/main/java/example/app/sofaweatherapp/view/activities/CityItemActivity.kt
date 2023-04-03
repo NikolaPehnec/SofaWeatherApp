@@ -1,5 +1,6 @@
 package example.app.sofaweatherapp.view.activities
 
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.view.Menu
@@ -31,7 +32,7 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
     private val forecastViewModel: ForecastViewModel by viewModels()
     private lateinit var todayWeatherRecyclerAdapter: WeatherRecyclerAdapter
     private lateinit var nextDaysWeatherRecyclerAdapter: WeatherRecyclerAdapter
-
+    private var unit = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -46,6 +47,11 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
         nextDaysWeatherRecyclerAdapter = WeatherRecyclerAdapter(this, mutableListOf(), this)
         binding.todayWeatherRv.adapter = todayWeatherRecyclerAdapter
         binding.nextDaysWeatherRv.adapter = nextDaysWeatherRecyclerAdapter
+
+        unit = getSharedPreferences("MY_PREFERENCES", Context.MODE_PRIVATE).getString(
+            "UNIT",
+            "Metric"
+        )!!
 
         locationName = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getSerializableExtra(
@@ -136,12 +142,21 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
                 time.text = dateTime.split("|")[1]
 
                 conditionText.text = weatherCurrent.condition.text
-                temperature.text = getString(
-                    R.string.temp_value,
-                    weatherCurrent.temp_c.roundToInt().toString(),
-                    getString(R.string.temp_unit)
-                )
                 weatherImage.load(Constants.HTTPS_PREFIX + weatherCurrent.condition.icon)
+
+                if (unit == "Metric") {
+                    temperature.text = getString(
+                        R.string.temp_value,
+                        weatherCurrent.temp_c.roundToInt().toString(),
+                        getString(R.string.temp_unit)
+                    )
+                } else {
+                    temperature.text = getString(
+                        R.string.temp_value,
+                        weatherCurrent.temp_f.roundToInt().toString(),
+                        getString(R.string.temp_unit_F)
+                    )
+                }
             }
         }
     }
@@ -151,33 +166,11 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
         forecastDays: List<ForecastDay>
     ) {
         binding.weatherFeatures.apply {
-            featureWind.setValue(
-                getString(
-                    R.string.wind_value,
-                    weatherCurrent.wind_kph.toString(),
-                    getString(R.string.wind_unit),
-                    weatherCurrent.wind_dir
-                )
-            )
             featureHumidty.setValue(
                 getString(
                     R.string.humidity_value,
                     weatherCurrent.humidity.toString(),
                     getString(R.string.humidity_unit)
-                )
-            )
-            featurePressure.setValue(
-                getString(
-                    R.string.pressure_value,
-                    weatherCurrent.pressure_mb.toString(),
-                    getString(R.string.pressure_unit)
-                )
-            )
-            featureVisibility.setValue(
-                getString(
-                    R.string.visibility_value,
-                    weatherCurrent.vis_km.toString(),
-                    getString(R.string.visibility_unit)
                 )
             )
             // Didnt find accuracy attribute
@@ -188,20 +181,83 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
                     getString(R.string.accuracy_unit)
                 )
             )
-            // Min, max value only in day forecasts
-            if (forecastDays.isNotEmpty()) {
-                val minTemp = forecastDays[0].day.mintemp_c.toInt().toString()
-                val maxTemp = forecastDays[0].day.maxtemp_c.toInt().toString()
-                val unit = getString(R.string.temp_unit)
-                featureTemp.setValue(
+
+            if (unit == "Metric") {
+                featureWind.setValue(
                     getString(
-                        R.string.temp_min_max_value,
-                        minTemp,
-                        unit,
-                        maxTemp,
-                        unit
+                        R.string.wind_value,
+                        weatherCurrent.wind_kph.toString(),
+                        getString(R.string.wind_unit),
+                        weatherCurrent.wind_dir
                     )
                 )
+                featurePressure.setValue(
+                    getString(
+                        R.string.pressure_value,
+                        weatherCurrent.pressure_mb.toString(),
+                        getString(R.string.pressure_unit)
+                    )
+                )
+                featureVisibility.setValue(
+                    getString(
+                        R.string.visibility_value,
+                        weatherCurrent.vis_km.toString(),
+                        getString(R.string.visibility_unit)
+                    )
+                )
+                // Min, max value only in day forecasts
+                if (forecastDays.isNotEmpty()) {
+                    val minTemp = forecastDays[0].day.mintemp_c.toInt().toString()
+                    val maxTemp = forecastDays[0].day.maxtemp_c.toInt().toString()
+                    val unit = getString(R.string.temp_unit)
+                    featureTemp.setValue(
+                        getString(
+                            R.string.temp_min_max_value,
+                            minTemp,
+                            unit,
+                            maxTemp,
+                            unit
+                        )
+                    )
+                }
+            } else {
+                featureWind.setValue(
+                    getString(
+                        R.string.wind_value,
+                        weatherCurrent.wind_mph.toString(),
+                        getString(R.string.wind_unit_mph),
+                        weatherCurrent.wind_dir
+                    )
+                )
+                featurePressure.setValue(
+                    getString(
+                        R.string.pressure_value,
+                        weatherCurrent.pressure_in.toString(),
+                        getString(R.string.pressure_unit_imp)
+                    )
+                )
+                featureVisibility.setValue(
+                    getString(
+                        R.string.visibility_value,
+                        weatherCurrent.vis_miles.toString(),
+                        getString(R.string.visibility_unit_miles)
+                    )
+                )
+                // Min, max value only in day forecasts
+                if (forecastDays.isNotEmpty()) {
+                    val minTemp = forecastDays[0].day.mintemp_f.toInt().toString()
+                    val maxTemp = forecastDays[0].day.maxtemp_f.toInt().toString()
+                    val unit = getString(R.string.temp_unit_F)
+                    featureTemp.setValue(
+                        getString(
+                            R.string.temp_min_max_value,
+                            minTemp,
+                            unit,
+                            maxTemp,
+                            unit
+                        )
+                    )
+                }
             }
         }
     }
