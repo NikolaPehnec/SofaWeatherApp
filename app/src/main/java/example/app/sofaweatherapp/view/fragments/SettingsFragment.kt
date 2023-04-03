@@ -33,7 +33,7 @@ class SettingsFragment : Fragment() {
             resources.getStringArray(R.array.languages)
         )
 
-        binding.radioGroup.setOnCheckedChangeListener { group, checkedId ->
+        binding.radioGroup.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
                 R.id.metric -> saveUnitPreference("Metric")
                 R.id.imperial -> saveUnitPreference("Imperial")
