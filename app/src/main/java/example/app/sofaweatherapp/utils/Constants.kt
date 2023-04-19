@@ -13,6 +13,7 @@ object Constants {
     const val UNIT_METRIC = "Metric"
     const val UNIT_IMPERIAL = "Imperial"
     const val PREF_NAME = "MY_PREFERENCES"
+    const val UPDATE_PAYLOAD = "UPDATE_PAYLOAD"
     const val LANG_EN = "en"
     const val LANG_HR = "hr"
 

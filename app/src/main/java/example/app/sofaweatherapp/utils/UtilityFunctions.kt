@@ -26,7 +26,6 @@ object UtilityFunctions {
         view: View, anchorView: View?, message: String, context: Context
     ): Snackbar {
         val ctw = ContextThemeWrapper(context, R.style.CustomSnackbarTheme)
-
         return Snackbar.make(
             ctw, view, message, Snackbar.LENGTH_SHORT
         ).setBackgroundTint(

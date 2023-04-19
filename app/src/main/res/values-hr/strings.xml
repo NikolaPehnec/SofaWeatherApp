@@ -19,6 +19,8 @@
     <string name="accuracy_title">PRECIZNOST</string>
     <string name="view_more">VIDI JOŠ</string>
 
+    <string name="my_cities">Moji gradovi</string>
+
     <string name="language">Jezik</string>
     <string name="city">Grad</string>
     <string name="settings">Postavke</string>

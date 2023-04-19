@@ -8,14 +8,16 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import example.app.sofaweatherapp.databinding.FragmentFavoritesBinding
+import example.app.sofaweatherapp.view.adapters.FavoriteLocationRecyclerAdapter
 import example.app.sofaweatherapp.viewmodel.ForecastViewModel
 
 @AndroidEntryPoint
-class FavoritesFragment : Fragment() {
+class FavoritesFragment : Fragment(), FavoriteLocationRecyclerAdapter.OnFavoriteItemClick {
 
     private var _binding: FragmentFavoritesBinding? = null
     private val forecastViewModel: ForecastViewModel by viewModels()
     private val binding get() = _binding!!
+    private lateinit var favoriteLocationsRecyclerAdapter: FavoriteLocationRecyclerAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -24,6 +26,10 @@ class FavoritesFragment : Fragment() {
     ): View {
         _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
 
+        favoriteLocationsRecyclerAdapter =
+            FavoriteLocationRecyclerAdapter(requireContext(), mutableListOf(), this)
+        binding.favoriteLocationsRv.adapter = favoriteLocationsRecyclerAdapter
+
         setListeners()
         forecastViewModel.getAllFavoriteLocations()
 
@@ -31,30 +37,17 @@ class FavoritesFragment : Fragment() {
     }
 
     private fun setListeners() {
-        forecastViewModel.favoriteData.observe(viewLifecycleOwner) { favoriteData ->
-
-            println("SQL FAVORITE PODACI DOŠLI")
-            println("SQL " + favoriteData.size)
-            for (data in favoriteData)
-                println("SQL " + data.locationName)
-/*            fillBasicInformation(forecastData.location, forecastData.current)
-            fillWeatherFeatures(forecastData.current, forecastData.forecastDays)
-
-            launchMapFragment(
-                forecastData.location.lat,
-                forecastData.location.lon,
-                forecastData.location.name
-            )
-
-            if (forecastData.forecastDays.isNotEmpty()) {
-                todayWeatherRecyclerAdapter.addItems(forecastData.forecastDays[0].hour)
-                nextDaysWeatherRecyclerAdapter.addItems(forecastData.forecastDays)
-            }*/
+        forecastViewModel.forecastListData.observe(viewLifecycleOwner) { favoriteData ->
+            favoriteLocationsRecyclerAdapter.addItems(favoriteData)
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onFavoriteItemClick(favorite: Boolean, locationName: String) {
+        forecastViewModel.updateFavoriteLocation(favorite, locationName)
     }
 }

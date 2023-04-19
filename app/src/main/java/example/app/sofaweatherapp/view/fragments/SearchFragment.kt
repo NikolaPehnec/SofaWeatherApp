@@ -20,6 +20,7 @@ import example.app.sofaweatherapp.utils.UtilityFunctions
 import example.app.sofaweatherapp.view.activities.CityItemActivity
 import example.app.sofaweatherapp.viewmodel.CitiesViewModel
 
+
 @AndroidEntryPoint
 class SearchFragment : Fragment() {
 

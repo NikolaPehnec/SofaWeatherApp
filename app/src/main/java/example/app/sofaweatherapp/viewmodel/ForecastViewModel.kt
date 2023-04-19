@@ -11,6 +11,8 @@ import example.app.sofaweatherapp.model.Result
 import example.app.sofaweatherapp.model.WeatherGeneralData
 import example.app.sofaweatherapp.repository.WeatherRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,8 +25,8 @@ class ForecastViewModel @Inject constructor(
     private val _forecastData = MutableLiveData<WeatherGeneralData>()
     val forecastResponseData: LiveData<WeatherGeneralData> = _forecastData
 
-    private val _favoriteData = MutableLiveData<List<LocationWeather>>()
-    val favoriteData: LiveData<List<LocationWeather>> = _favoriteData
+    private val _forecastListData = MutableLiveData<List<WeatherGeneralData>>()
+    val forecastListData: LiveData<List<WeatherGeneralData>> = _forecastListData
 
     private val _forecastResponseError = MutableLiveData<String>()
     val forecastResponseError: LiveData<String> = _forecastResponseError
@@ -34,15 +36,12 @@ class ForecastViewModel @Inject constructor(
             when (
                 val result = weatherRepository.getForecast(locationName)
             ) {
-                //Updatea uvijek na false, promijenit
                 is Result.Success -> {
                     result.data.apply {
                         val isFavorite =
                             weatherDao.getFavoriteFromLocation(result.data.location.name.lowercase())
                         result.data.favorite = isFavorite ?: false
 
-
-                        println("SQL IS FAVORITE:" + isFavorite)
                         weatherDao.saveLocation(
                             LocationWeather(
                                 location.name.lowercase(),
@@ -52,14 +51,28 @@ class ForecastViewModel @Inject constructor(
                                 isFavorite ?: false
                             )
                         )
-                        println("SQL SAVED LOCATION:" + isFavorite)
-
                         _forecastData.postValue(result.data)
                     }
-
                 }
                 is Result.Error -> _forecastResponseError.postValue(result.exception.message)
             }
+        }
+    }
+
+    fun searchMultipleForecasts(locationNames: List<String>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val weatherData = locationNames.map { name ->
+                async {
+                    val result = weatherRepository.getForecast(name)
+                    if (result is Result.Success) {
+                        result.data
+                    } else {
+                        null
+                    }
+                }
+            }.awaitAll().filterNotNull()
+
+            _forecastListData.postValue(weatherData)
         }
     }
 
@@ -69,10 +82,15 @@ class ForecastViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Load favorite locations from DB, refresh from API
+     */
     fun getAllFavoriteLocations() {
         viewModelScope.launch(Dispatchers.IO) {
             val result = weatherDao.getAllFavoriteLocations()
-            _favoriteData.postValue(result)
+            _forecastListData.postValue(result)
+
+            searchMultipleForecasts(result.map { l -> l.location.name }.toList())
         }
     }
 }
