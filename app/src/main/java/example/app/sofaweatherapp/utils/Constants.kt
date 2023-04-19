@@ -8,7 +8,7 @@ object Constants {
     const val MAPS_LONG = "map_location_long"
     const val MAPS_TITLE = "map_title"
     const val NUM_OF_FORECAST_DAYS = 7
-    const val SEARCH_TRESHOLD = 2
+    const val SEARCH_TRESHOLD = 3
     const val UNIT_PREF_KEY = "UNIT"
     const val UNIT_METRIC = "Metric"
     const val UNIT_IMPERIAL = "Imperial"

@@ -88,8 +88,11 @@ class SearchFragment : Fragment() {
 
         binding.autoCompleteTv.apply {
             addTextChangedListener {
-                if (it.toString().length > Constants.SEARCH_TRESHOLD) {
+                //On treshold call api, after api perform local filtering
+                if (it.toString().length == Constants.SEARCH_TRESHOLD) {
                     citiesViewModel.searchCities(it.toString())
+                } else if (it.toString().length > Constants.SEARCH_TRESHOLD) {
+                    checkForSearchStringInLocations(it.toString())
                 }
             }
 
@@ -116,6 +119,12 @@ class SearchFragment : Fragment() {
                 startCityItemActivity(adapter.getItem(position).toString())
             }
         }
+    }
+
+    private fun checkForSearchStringInLocations(search: String) {
+        val filteredLocations = searchedLocations.filter { l -> l.name.lowercase().startsWith(search.lowercase()) }.toList()
+        searchArrayAdapter.clear()
+        searchArrayAdapter.addAll(filteredLocations.map { l -> l.name })
     }
 
     private fun startCityItemActivity(locationName: String) {
