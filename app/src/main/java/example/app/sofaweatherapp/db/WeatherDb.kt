@@ -8,7 +8,7 @@ import example.app.sofaweatherapp.model.LocationWeather
 import example.app.sofaweatherapp.utils.ForecastDayListConverter
 
 
-@Database(entities = [LocationWeather::class], version = 2)
+@Database(entities = [LocationWeather::class], version = 3)
 @TypeConverters(ForecastDayListConverter::class)
 abstract class WeatherDb : RoomDatabase() {
 

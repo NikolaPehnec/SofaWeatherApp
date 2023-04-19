@@ -2,6 +2,7 @@ package example.app.sofaweatherapp.di
 
 import android.content.Context
 import androidx.room.Room
+import androidx.room.RoomDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,6 +16,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.Executors
 import javax.inject.Singleton
 
 @Module
@@ -47,7 +49,13 @@ class AppModule {
             appContext,
             WeatherDb::class.java,
             "WeatherDB"
-        ).fallbackToDestructiveMigration().build()
+        ).fallbackToDestructiveMigration()
+            .setQueryCallback(object : RoomDatabase.QueryCallback {
+                override fun onQuery(sqlQuery: String, bindArgs: List<Any?>) {
+                    println("SQL Query: $sqlQuery SQL Args: $bindArgs")
+                }
+            }, Executors.newSingleThreadExecutor())
+            .build()
     }
 
     @Provides

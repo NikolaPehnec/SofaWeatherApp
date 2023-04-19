@@ -11,13 +11,21 @@ interface WeatherDao {
     suspend fun loadLocationWeatherData(locationName: String): LocationWeather?
 
     @Query(
-        "SELECT * FROM location_weather WHERE favorite = true"
+        "SELECT * FROM location_weather WHERE favorite = 1"
     )
-    suspend fun loadFavoriteLocations(): LocationWeather?
+    suspend fun getAllFavoriteLocations(): List<LocationWeather>
+
+    @Query(
+        "SELECT favorite FROM location_weather WHERE locationName = :locationName"
+    )
+    suspend fun getFavoriteFromLocation(locationName: String): Boolean?
 
     @Upsert
     suspend fun saveLocation(locationWeather: LocationWeather)
 
     @Update
     suspend fun updateLocation(locationWeather: LocationWeather)
+
+    @Query("UPDATE location_weather SET favorite=:favorite WHERE locationName = :locationName")
+    suspend fun updateFavoriteLocation(favorite: Boolean, locationName: String)
 }

@@ -100,7 +100,7 @@ class SearchFragment : Fragment() {
                 if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
                     binding.autoCompleteTv.text.toString().apply {
                         if (this.length > 2) {
-                            startCityItemActivity(this)
+                            startCityItemActivity(this.lowercase().trim())
                         } else {
                             UtilityFunctions.makeErrorSnackBar(
                                 binding.root,

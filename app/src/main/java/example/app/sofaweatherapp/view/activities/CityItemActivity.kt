@@ -34,6 +34,9 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
     private lateinit var todayWeatherRecyclerAdapter: WeatherRecyclerAdapter
     private lateinit var nextDaysWeatherRecyclerAdapter: WeatherRecyclerAdapter
     private var unit = ""
+    private var initialFavorite: Boolean? = null
+    private lateinit var _menu: Menu
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -51,7 +54,7 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
 
         unit = UtilityFunctions.getUnitFromSharedPreferences(this)
         locationName = getLocationNameFromIntent(intent)
-        forecastViewModel.searchForecast(locationName)
+        forecastViewModel.searchForecast(locationName.lowercase().trim())
 
         setListeners()
     }
@@ -64,6 +67,8 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
 
     private fun setListeners() {
         forecastViewModel.forecastResponseData.observe(this) { forecastData ->
+            initialFavorite = forecastData.favorite
+            setInitialFavorite(initialFavorite ?: false)
             fillBasicInformation(forecastData.location, forecastData.current)
             fillWeatherFeatures(forecastData.current, forecastData.forecastDays)
 
@@ -197,6 +202,10 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.city_menu, menu)
+        _menu = menu!!
+        //If data is fetched before menu is created
+        if (initialFavorite != null)
+            setInitialFavorite(initialFavorite!!)
 
         return super.onCreateOptionsMenu(menu)
     }
@@ -210,13 +219,27 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
         return super.onOptionsItemSelected(item)
     }
 
+    private fun setInitialFavorite(favorite: Boolean) {
+        if (::_menu.isInitialized) {
+            _menu.findItem(R.id.favorite)
+                .setIcon(if (favorite) R.drawable.ic_baseline_star_24 else R.drawable.ic_baseline_star_outline_24)
+            _menu.findItem(R.id.favorite).title =
+                getString(if (favorite) R.string.favorite else R.string.unfavorite)
+        }
+    }
+
     private fun changeFavorite(item: MenuItem) {
-        if (item.title!! == getString(R.string.favorite)) {
-            item.setIcon(R.drawable.ic_baseline_star_24)
-            item.title = getString(R.string.unfavorite)
-        } else {
-            item.setIcon(R.drawable.ic_baseline_star_outline_24)
-            item.title = getString(R.string.favorite)
+        //Location loaded
+        if (locationNameApi != "") {
+            if (item.title!! == getString(R.string.unfavorite)) {
+                item.setIcon(R.drawable.ic_baseline_star_24)
+                item.title = getString(R.string.favorite)
+                forecastViewModel.updateFavoriteLocation(true, locationName.lowercase())
+            } else {
+                item.setIcon(R.drawable.ic_baseline_star_outline_24)
+                item.title = getString(R.string.unfavorite)
+                forecastViewModel.updateFavoriteLocation(false, locationName.lowercase())
+            }
         }
     }
 }

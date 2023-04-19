@@ -13,5 +13,5 @@ class LocationWeather(
     @Embedded
     override val current: WeatherCurrent,
     override val forecastDays: List<ForecastDay>,
-    val favorite: Boolean = false
+    override var favorite: Boolean?
 ) : WeatherGeneralData

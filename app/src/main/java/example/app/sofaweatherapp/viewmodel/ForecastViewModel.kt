@@ -23,6 +23,9 @@ class ForecastViewModel @Inject constructor(
     private val _forecastData = MutableLiveData<WeatherGeneralData>()
     val forecastResponseData: LiveData<WeatherGeneralData> = _forecastData
 
+    private val _favoriteData = MutableLiveData<List<LocationWeather>>()
+    val favoriteData: LiveData<List<LocationWeather>> = _favoriteData
+
     private val _forecastResponseError = MutableLiveData<String>()
     val forecastResponseError: LiveData<String> = _forecastResponseError
 
@@ -31,18 +34,26 @@ class ForecastViewModel @Inject constructor(
             when (
                 val result = weatherRepository.getForecast(locationName)
             ) {
-                //Updatea uvijek na false
+                //Updatea uvijek na false, promijenit
                 is Result.Success -> {
                     result.data.apply {
+                        val isFavorite =
+                            weatherDao.getFavoriteFromLocation(result.data.location.name.lowercase())
+                        result.data.favorite = isFavorite ?: false
+
+
+                        println("SQL IS FAVORITE:" + isFavorite)
                         weatherDao.saveLocation(
                             LocationWeather(
-                                location.name,
+                                location.name.lowercase(),
                                 location,
                                 current,
                                 forecastDays,
-                                false
+                                isFavorite ?: false
                             )
                         )
+                        println("SQL SAVED LOCATION:" + isFavorite)
+
                         _forecastData.postValue(result.data)
                     }
 
@@ -52,9 +63,16 @@ class ForecastViewModel @Inject constructor(
         }
     }
 
-    fun updateLocationData(locationWeather: LocationWeather) {
+    fun updateFavoriteLocation(favorite: Boolean, locationName: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            weatherDao.updateLocation(locationWeather)
+            weatherDao.updateFavoriteLocation(favorite, locationName)
+        }
+    }
+
+    fun getAllFavoriteLocations() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = weatherDao.getAllFavoriteLocations()
+            _favoriteData.postValue(result)
         }
     }
 }

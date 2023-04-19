@@ -6,6 +6,7 @@ interface WeatherGeneralData {
     val location: LocationDetail
     val forecastDays: List<ForecastDay>
     val current: WeatherCurrent
+    var favorite: Boolean?
 }
 
 data class LocationDetail(
