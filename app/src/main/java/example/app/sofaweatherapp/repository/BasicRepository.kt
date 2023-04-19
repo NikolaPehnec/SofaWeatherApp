@@ -1,4 +1,4 @@
-package example.app.sofaweatherapp.networking
+package example.app.sofaweatherapp.repository
 
 import example.app.sofaweatherapp.model.Result
 import retrofit2.Response

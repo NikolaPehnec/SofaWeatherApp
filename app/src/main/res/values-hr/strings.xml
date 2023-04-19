@@ -22,6 +22,7 @@
     <string name="language">Jezik</string>
     <string name="city">Grad</string>
     <string name="settings">Postavke</string>
+    <string name="unit_type_text">Odaberi sustav mjerenja</string>
 
     <string name="metric">Metrički</string>
     <string name="imperial">Imperijalni</string>

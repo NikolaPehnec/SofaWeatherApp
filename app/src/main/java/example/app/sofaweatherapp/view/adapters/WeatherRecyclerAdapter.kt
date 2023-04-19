@@ -11,7 +11,9 @@ import example.app.sofaweatherapp.databinding.WeatherItemDetailBinding
 import example.app.sofaweatherapp.model.ForecastDay
 import example.app.sofaweatherapp.model.WeatherHour
 import example.app.sofaweatherapp.utils.Constants
-import example.app.sofaweatherapp.utils.UtilityFunctions
+import example.app.sofaweatherapp.utils.UtilityFunctions.getNameOfDayFromDate
+import example.app.sofaweatherapp.utils.UtilityFunctions.getUnitFromSharedPreferences
+import example.app.sofaweatherapp.utils.UtilityFunctions.getUnitTempValueFromItem
 
 class WeatherRecyclerAdapter(
     private val context: Context,
@@ -22,10 +24,7 @@ class WeatherRecyclerAdapter(
 
     private var unit = ""
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderWeather {
-        unit = context.getSharedPreferences("MY_PREFERENCES", Context.MODE_PRIVATE).getString(
-            "UNIT",
-            "Metric"
-        )!!
+        unit = getUnitFromSharedPreferences(context)
         return ViewHolderWeather(
             WeatherItemDetailBinding.inflate(
                 LayoutInflater.from(parent.context),
@@ -64,37 +63,12 @@ class WeatherRecyclerAdapter(
                 is WeatherHour -> {
                     binding.title.text = item.time.split(" ")[1]
                     binding.image.load(Constants.HTTPS_PREFIX + item.condition.icon)
-                    if (unit == "Metric") {
-                        binding.value.text = context.getString(
-                            R.string.temp_value,
-                            item.temp_c.toInt().toString(),
-                            context.getString(R.string.temp_unit)
-                        )
-                    } else {
-                        binding.value.text = context.getString(
-                            R.string.temp_value,
-                            item.temp_f.toInt().toString(),
-                            context.getString(R.string.temp_unit_F)
-                        )
-                    }
+                    binding.value.text = getUnitTempValueFromItem(unit, context, item)
                 }
-
                 is ForecastDay -> {
-                    binding.title.text = UtilityFunctions.getNameOfDayFromDate(item.date_epoch)
+                    binding.title.text = getNameOfDayFromDate(item.date_epoch)
                     binding.image.load(Constants.HTTPS_PREFIX + item.day.condition.icon)
-                    if (unit == "Metric") {
-                        binding.value.text = context.getString(
-                            R.string.temp_value,
-                            item.day.avgtemp_c.toInt().toString(),
-                            context.getString(R.string.temp_unit)
-                        )
-                    } else {
-                        binding.value.text = context.getString(
-                            R.string.temp_value,
-                            item.day.avgtemp_f.toInt().toString(),
-                            context.getString(R.string.temp_unit_F)
-                        )
-                    }
+                    binding.value.text = getUnitTempValueFromItem(unit, context, item)
                 }
             }
         }

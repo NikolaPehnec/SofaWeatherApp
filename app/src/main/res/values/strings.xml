@@ -43,6 +43,7 @@
 
     <string name="settings">Settings</string>
 
+    <string name="unit_type_text">Choose type of unit</string>
     <string name="language">Language</string>
     <string name="city">City</string>
     <string name="metric">Metric</string>

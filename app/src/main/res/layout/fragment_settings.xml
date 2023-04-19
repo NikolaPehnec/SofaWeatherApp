@@ -61,7 +61,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="16dp"
-                android:text="Choose type of unit" />
+                android:text="@string/unit_type_text" />
 
             <RadioGroup
                 android:id="@+id/radio_group"
