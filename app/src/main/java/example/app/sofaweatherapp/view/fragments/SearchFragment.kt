@@ -122,7 +122,9 @@ class SearchFragment : Fragment() {
     }
 
     private fun checkForSearchStringInLocations(search: String) {
-        val filteredLocations = searchedLocations.filter { l -> l.name.lowercase().startsWith(search.lowercase()) }.toList()
+        val filteredLocations =
+            searchedLocations.filter { l -> l.name.lowercase().startsWith(search.lowercase()) }
+                .toList()
         searchArrayAdapter.clear()
         searchArrayAdapter.addAll(filteredLocations.map { l -> l.name })
     }

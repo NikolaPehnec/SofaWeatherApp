@@ -1,12 +1,15 @@
 package example.app.sofaweatherapp.di
 
 import android.content.Context
+import androidx.room.Room
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import example.app.sofaweatherapp.api.WeatherServiceApi
+import example.app.sofaweatherapp.dao.WeatherDao
+import example.app.sofaweatherapp.db.WeatherDb
 import example.app.sofaweatherapp.utils.Constants
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -36,4 +39,19 @@ class AppModule {
             .client(httpClient).build()
             .create(WeatherServiceApi::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideAppDatabase(@ApplicationContext appContext: Context): WeatherDb {
+        return Room.databaseBuilder(
+            appContext,
+            WeatherDb::class.java,
+            "WeatherDB"
+        ).fallbackToDestructiveMigration().build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideWeatherDAO(weatherDb: WeatherDb): WeatherDao =
+        weatherDb.weatherDao()
 }
