@@ -16,6 +16,11 @@ interface WeatherDao {
     suspend fun getAllFavoriteLocations(): List<LocationWeather>
 
     @Query(
+        "UPDATE location_weather SET favorite = 0"
+    )
+    suspend fun clearAllFavoriteLocations()
+
+    @Query(
         "SELECT favorite FROM location_weather WHERE locationName = :locationName"
     )
     suspend fun getFavoriteFromLocation(locationName: String): Boolean?

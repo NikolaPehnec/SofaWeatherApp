@@ -28,12 +28,13 @@
     <TextView
         android:id="@+id/condition_text"
         style="@style/BodyMediumNLv1Left"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
-        tools:text="Light rain"
+        app:layout_constraintEnd_toStartOf="@+id/temperature"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/time" />
+        app:layout_constraintTop_toBottomOf="@id/time"
+        tools:text="Light rain" />
 
     <ImageView
         android:id="@+id/weather_image"

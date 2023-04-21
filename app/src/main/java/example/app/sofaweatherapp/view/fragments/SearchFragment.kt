@@ -41,10 +41,9 @@ class SearchFragment : Fragment() {
             requireContext(),
             layout.simple_list_item_1
         )
+
         binding.autoCompleteTv.setAdapter(searchArrayAdapter)
-
         setListeners()
-
         return binding.root
     }
 

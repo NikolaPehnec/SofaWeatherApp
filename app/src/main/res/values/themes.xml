@@ -29,4 +29,17 @@
         <item name="android:layout_margin">32dp</item>
     </style>
 
+
+    <style name="ButtonErrorStyle" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:textAppearance">@style/ButtonLabelErrorCenter</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">14sp</item>
+        <item name="strokeColor">@color/status_error_snackbar</item>
+        <item name="android:letterSpacing">0.04</item>
+        <item name="colorOutline">@color/status_error_snackbar</item>
+        <item name="textOutlineColor">@color/status_error_snackbar</item>
+        <item name="android:lineSpacingExtra">6sp</item>
+        <item name="android:textColor">@color/status_error_snackbar</item>
+    </style>
 </resources>

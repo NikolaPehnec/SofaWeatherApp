@@ -2,25 +2,34 @@ package example.app.sofaweatherapp.view.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.view.MotionEventCompat
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import example.app.sofaweatherapp.R
 import example.app.sofaweatherapp.databinding.LocationFavoriteItemBinding
 import example.app.sofaweatherapp.model.WeatherGeneralData
 import example.app.sofaweatherapp.utils.Constants
+import example.app.sofaweatherapp.utils.ItemTouchHelperAdapter
+import example.app.sofaweatherapp.utils.OnStartDragListener
 import example.app.sofaweatherapp.utils.UtilityFunctions
 import example.app.sofaweatherapp.utils.UtilityFunctions.getUnitFromSharedPreferences
 import example.app.sofaweatherapp.utils.UtilityFunctions.getUnitTempValueFromItem
+import java.util.*
 
 class FavoriteLocationRecyclerAdapter(
     private val context: Context,
     private var items: MutableList<WeatherGeneralData>,
-    private val onFavoriteItemClick: OnFavoriteItemClick
+    private val onFavoriteItemClick: OnFavoriteItemClick,
+    private val dragStartListener: OnStartDragListener,
+    var editState: Boolean = false
 ) :
-    RecyclerView.Adapter<FavoriteLocationRecyclerAdapter.ViewHolderWeather>() {
+    RecyclerView.Adapter<FavoriteLocationRecyclerAdapter.ViewHolderWeather>(),
+    ItemTouchHelperAdapter {
 
     private var unit = ""
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderWeather {
@@ -30,7 +39,8 @@ class FavoriteLocationRecyclerAdapter(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
-            )
+            ),
+            dragStartListener
         )
     }
 
@@ -75,13 +85,22 @@ class FavoriteLocationRecyclerAdapter(
         notifyItemRemoved(index)
     }
 
+    fun setRecyclerEditState(newEditState: Boolean) {
+        editState = newEditState
+        for (i in items.indices)
+            notifyItemChanged(i, Constants.UPDATE_PAYLOAD)
+    }
+
     override fun getItemCount(): Int = items.size
 
     interface OnFavoriteItemClick {
         fun onFavoriteItemClick(favorite: Boolean, locationName: String)
     }
 
-    inner class ViewHolderWeather(private val binding: LocationFavoriteItemBinding) :
+    inner class ViewHolderWeather(
+        private val binding: LocationFavoriteItemBinding,
+        private val dragStartListener: OnStartDragListener? = null
+    ) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: WeatherGeneralData) {
@@ -94,6 +113,7 @@ class FavoriteLocationRecyclerAdapter(
             )
             binding.time.text = dateTime.split("|")[1]
             binding.timezone.text = item.location.tz_id
+            binding.reorderim.visibility = if (editState) View.VISIBLE else View.GONE
 
             binding.favoriteImage.setImageDrawable(
                 AppCompatResources.getDrawable(
@@ -111,6 +131,22 @@ class FavoriteLocationRecyclerAdapter(
                 onFavoriteItemClick.onFavoriteItemClick(false, item.location.name.lowercase())
                 removeItem(item)
             }
+
+            binding.reorderim?.setOnTouchListener(View.OnTouchListener { v, event ->
+                if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
+                    dragStartListener?.onStartDrag(this@ViewHolderWeather)
+                }
+                false
+            })
         }
+    }
+
+    override fun onItemMove(fromPosition: Int, toPosition: Int): Boolean {
+        Collections.swap(items, fromPosition, toPosition)
+        notifyItemMoved(fromPosition, toPosition)
+        return true
+    }
+
+    override fun onItemDismiss(position: Int) {
     }
 }

@@ -1,22 +1,34 @@
 package example.app.sofaweatherapp.view.fragments
 
+import android.app.AlertDialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import dagger.hilt.android.AndroidEntryPoint
 import example.app.sofaweatherapp.R
 import example.app.sofaweatherapp.databinding.FragmentSettingsBinding
 import example.app.sofaweatherapp.utils.Constants
+import example.app.sofaweatherapp.utils.UtilityFunctions
 import example.app.sofaweatherapp.utils.UtilityFunctions.getUnitFromSharedPreferences
 import example.app.sofaweatherapp.utils.UtilityFunctions.saveUnitPreference
+import example.app.sofaweatherapp.viewmodel.ForecastViewModel
 
-class SettingsFragment : Fragment() {
+@AndroidEntryPoint
+class SettingsFragment : Fragment(),
+    MenuProvider {
 
     private var _binding: FragmentSettingsBinding? = null
+    private val forecastViewModel: ForecastViewModel by activityViewModels()
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -25,6 +37,7 @@ class SettingsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSettingsBinding.inflate(inflater, container, false)
+        requireActivity().addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
         val adapter = ArrayAdapter(
             requireContext(),
@@ -47,8 +60,11 @@ class SettingsFragment : Fragment() {
             setText(getCurrentLanguage())
         }
 
-        setUnitPreference()
+        binding.clearCitiesBtn.setOnClickListener {
+            showClearCitiesDialog()
+        }
 
+        setUnitPreference()
         return binding.root
     }
 
@@ -97,5 +113,43 @@ class SettingsFragment : Fragment() {
         } else if (unit == Constants.UNIT_IMPERIAL) {
             binding.imperial.isChecked = true
         }
+    }
+
+    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+        menuInflater.inflate(R.menu.settings_fragment_menu, menu)
+    }
+
+    override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+        return true
+    }
+
+    private fun showClearCitiesDialog() {
+        //Put dialog in separate class
+        val builder = AlertDialog.Builder(requireContext())
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.custom_dialog, null)
+        val titleTextView = dialogView.findViewById<TextView>(R.id.dialog_title)
+        val descriptionTextView = dialogView.findViewById<TextView>(R.id.dialog_description)
+        titleTextView.text = getString(R.string.clear_my_cities_dialog_title)
+        descriptionTextView.text = getString(R.string.clear_my_cities_dialog_mess)
+        builder.setView(dialogView)
+        val dialog = builder.create()
+        dialog.window?.setBackgroundDrawable(
+            ColorDrawable(Color.TRANSPARENT)
+        )
+
+        dialogView.findViewById<Button>(R.id.dialog_cancel_button).setOnClickListener {
+            dialog.dismiss()
+        }
+        dialogView.findViewById<Button>(R.id.dialog_ok_button).setOnClickListener {
+            forecastViewModel.clearAllFavoriteLocations()
+            dialog.dismiss()
+            UtilityFunctions.makeNotifiationSnackBar(
+                binding.root,
+                null,
+                getString(R.string.clear_my_cities_after_message),
+                requireContext()
+            ).show()
+        }
+        dialog.show()
     }
 }

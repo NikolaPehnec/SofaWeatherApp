@@ -54,7 +54,7 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
 
         unit = UtilityFunctions.getUnitFromSharedPreferences(this)
         locationName = getLocationNameFromIntent(intent)
-        forecastViewModel.searchForecast(locationName.lowercase().trim())
+        forecastViewModel.searchForecast(locationName)
 
         setListeners()
     }
@@ -234,11 +234,11 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
             if (item.title!! == getString(R.string.unfavorite)) {
                 item.setIcon(R.drawable.ic_baseline_star_24)
                 item.title = getString(R.string.favorite)
-                forecastViewModel.updateFavoriteLocation(true, locationName.lowercase())
+                forecastViewModel.updateFavoriteLocation(true, locationNameApi.lowercase())
             } else {
                 item.setIcon(R.drawable.ic_baseline_star_outline_24)
                 item.title = getString(R.string.unfavorite)
-                forecastViewModel.updateFavoriteLocation(false, locationName.lowercase())
+                forecastViewModel.updateFavoriteLocation(false, locationNameApi.lowercase())
             }
         }
     }

@@ -36,6 +36,20 @@ object UtilityFunctions {
         ).setTextColor(ContextCompat.getColor(context, R.color.on_color)).setAnchorView(anchorView)
     }
 
+    fun makeNotifiationSnackBar(
+        view: View, anchorView: View?, message: String, context: Context
+    ): Snackbar {
+        val ctw = ContextThemeWrapper(context, R.style.CustomSnackbarTheme)
+        return Snackbar.make(
+            ctw, view, message, Snackbar.LENGTH_SHORT
+        ).setBackgroundTint(
+            ContextCompat.getColor(context, R.color.neutrals_n_lv_1)
+        ).setIcon(
+            AppCompatResources.getDrawable(context, R.drawable.ic_baseline_close_white_24)!!,
+            ContextCompat.getColor(context, R.color.on_color)
+        ).setTextColor(ContextCompat.getColor(context, R.color.on_color)).setAnchorView(anchorView)
+    }
+
     fun epochToDateTimeAtTimeZone(epochSeconds: Long, timeZone: String): String {
         val dateTime = Instant.ofEpochMilli(epochSeconds * 1000).atZone(ZoneId.of(timeZone))
 
