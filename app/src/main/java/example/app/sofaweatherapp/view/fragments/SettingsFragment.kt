@@ -1,13 +1,8 @@
 package example.app.sofaweatherapp.view.fragments
 
-import android.app.AlertDialog
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.*
 import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import androidx.core.view.MenuProvider
@@ -18,6 +13,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import example.app.sofaweatherapp.R
 import example.app.sofaweatherapp.databinding.FragmentSettingsBinding
 import example.app.sofaweatherapp.utils.Constants
+import example.app.sofaweatherapp.utils.CustomDialog
 import example.app.sofaweatherapp.utils.UtilityFunctions
 import example.app.sofaweatherapp.utils.UtilityFunctions.getUnitFromSharedPreferences
 import example.app.sofaweatherapp.utils.UtilityFunctions.saveUnitPreference
@@ -124,32 +120,20 @@ class SettingsFragment : Fragment(),
     }
 
     private fun showClearCitiesDialog() {
-        //Put dialog in separate class
-        val builder = AlertDialog.Builder(requireContext())
-        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.custom_dialog, null)
-        val titleTextView = dialogView.findViewById<TextView>(R.id.dialog_title)
-        val descriptionTextView = dialogView.findViewById<TextView>(R.id.dialog_description)
-        titleTextView.text = getString(R.string.clear_my_cities_dialog_title)
-        descriptionTextView.text = getString(R.string.clear_my_cities_dialog_mess)
-        builder.setView(dialogView)
-        val dialog = builder.create()
-        dialog.window?.setBackgroundDrawable(
-            ColorDrawable(Color.TRANSPARENT)
-        )
-
-        dialogView.findViewById<Button>(R.id.dialog_cancel_button).setOnClickListener {
-            dialog.dismiss()
-        }
-        dialogView.findViewById<Button>(R.id.dialog_ok_button).setOnClickListener {
-            forecastViewModel.clearAllFavoriteLocations()
-            dialog.dismiss()
-            UtilityFunctions.makeNotifiationSnackBar(
-                binding.root,
-                null,
-                getString(R.string.clear_my_cities_after_message),
-                requireContext()
-            ).show()
-        }
-        dialog.show()
+        CustomDialog(
+            requireContext(),
+            R.layout.custom_dialog,
+            getString(R.string.clear_my_cities_dialog_title),
+            getString(R.string.clear_my_cities_dialog_mess),
+            onConfirm = {
+                forecastViewModel.clearAllFavoriteLocations()
+                UtilityFunctions.makeNotifiationSnackBar(
+                    binding.root,
+                    null,
+                    getString(R.string.clear_my_cities_after_message),
+                    requireContext()
+                ).show()
+            }
+        ).show()
     }
 }
