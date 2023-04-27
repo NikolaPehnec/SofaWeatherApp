@@ -20,7 +20,8 @@ import example.app.sofaweatherapp.utils.UtilityFunctions.saveUnitPreference
 import example.app.sofaweatherapp.viewmodel.ForecastViewModel
 
 @AndroidEntryPoint
-class SettingsFragment : Fragment(),
+class SettingsFragment :
+    Fragment(),
     MenuProvider {
 
     private var _binding: FragmentSettingsBinding? = null

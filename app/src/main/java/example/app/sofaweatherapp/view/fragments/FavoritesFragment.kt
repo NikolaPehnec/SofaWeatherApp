@@ -17,8 +17,11 @@ import example.app.sofaweatherapp.view.adapters.FavoriteLocationRecyclerAdapter
 import example.app.sofaweatherapp.viewmodel.ForecastViewModel
 
 @AndroidEntryPoint
-class FavoritesFragment : Fragment(), FavoriteLocationRecyclerAdapter.OnFavoriteItemClick,
-    MenuProvider, OnStartDragListener {
+class FavoritesFragment :
+    Fragment(),
+    FavoriteLocationRecyclerAdapter.OnFavoriteItemClick,
+    MenuProvider,
+    OnStartDragListener {
 
     private var _binding: FragmentFavoritesBinding? = null
     private val forecastViewModel: ForecastViewModel by activityViewModels()
@@ -92,5 +95,4 @@ class FavoritesFragment : Fragment(), FavoriteLocationRecyclerAdapter.OnFavorite
             mItemTouchHelper?.startDrag(it)
         }
     }
-
 }

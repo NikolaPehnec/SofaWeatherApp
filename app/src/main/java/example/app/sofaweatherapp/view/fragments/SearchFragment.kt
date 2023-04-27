@@ -20,7 +20,6 @@ import example.app.sofaweatherapp.utils.UtilityFunctions
 import example.app.sofaweatherapp.view.activities.CityItemActivity
 import example.app.sofaweatherapp.viewmodel.CitiesViewModel
 
-
 @AndroidEntryPoint
 class SearchFragment : Fragment() {
 
@@ -88,7 +87,7 @@ class SearchFragment : Fragment() {
 
         binding.autoCompleteTv.apply {
             addTextChangedListener {
-                //On treshold call api, after api perform local filtering
+                // On treshold call api, after api perform local filtering
                 if (it.toString().length == Constants.SEARCH_TRESHOLD) {
                     citiesViewModel.searchCities(it.toString())
                 } else if (it.toString().length > Constants.SEARCH_TRESHOLD) {

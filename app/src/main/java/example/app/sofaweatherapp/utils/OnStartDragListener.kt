@@ -10,5 +10,4 @@ interface OnStartDragListener {
      * @param viewHolder The holder of the view to drag.
      */
     fun onStartDrag(viewHolder: RecyclerView.ViewHolder?)
-
 }

@@ -35,7 +35,7 @@ open class WeatherRepository @Inject constructor(
                     weatherDao.getFavoriteFromLocation(resultApi.data.location.name.lowercase())
                 resultApi.data.favorite = isFavorite ?: false
 
-                //Refreshing DB value
+                // Refreshing DB value
                 weatherDao.saveLocation(
                     LocationWeather(
                         resultApi.data.location.name.lowercase(),
@@ -48,11 +48,13 @@ open class WeatherRepository @Inject constructor(
             }
             return resultApi
         } else {
-            //Loading CityItemActivity offline
+            // Loading CityItemActivity offline
             val dbData = weatherDao.loadLocationWeatherData(location)
-            return if (dbData != null)
+            return if (dbData != null) {
                 Result.Success(dbData)
-            else Result.Error(Exception("No data in DB"))
+            } else {
+                Result.Error(Exception("No data in DB"))
+            }
         }
     }
 }

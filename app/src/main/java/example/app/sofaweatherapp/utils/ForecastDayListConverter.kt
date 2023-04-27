@@ -15,7 +15,7 @@ class ForecastDayListConverter {
     @TypeConverter
     fun toForecastDayList(value: String): List<ForecastDay> {
         return try {
-            Gson().fromJson<List<ForecastDay>>(value) //using extension function
+            Gson().fromJson<List<ForecastDay>>(value) // using extension function
         } catch (e: Exception) {
             arrayListOf()
         }
@@ -24,4 +24,3 @@ class ForecastDayListConverter {
     inline fun <reified T> Gson.fromJson(json: String) =
         fromJson<T>(json, object : TypeToken<T>() {}.type)
 }
-

@@ -132,12 +132,14 @@ class FavoriteLocationRecyclerAdapter(
                 removeItem(item)
             }
 
-            binding.reorderim?.setOnTouchListener(View.OnTouchListener { v, event ->
-                if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
-                    dragStartListener?.onStartDrag(this@ViewHolderWeather)
+            binding.reorderim?.setOnTouchListener(
+                View.OnTouchListener { v, event ->
+                    if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
+                        dragStartListener?.onStartDrag(this@ViewHolderWeather)
+                    }
+                    false
                 }
-                false
-            })
+            )
         }
     }
 

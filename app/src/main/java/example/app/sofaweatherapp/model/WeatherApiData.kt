@@ -9,4 +9,3 @@ data class WeatherApiData(
     override val forecastDays: List<ForecastDay>
         get() = forecast.forecastday
 }
-

@@ -50,11 +50,14 @@ class AppModule {
             WeatherDb::class.java,
             "WeatherDB"
         ).fallbackToDestructiveMigration()
-            .setQueryCallback(object : RoomDatabase.QueryCallback {
-                override fun onQuery(sqlQuery: String, bindArgs: List<Any?>) {
-                    println("SQL Query: $sqlQuery SQL Args: $bindArgs")
-                }
-            }, Executors.newSingleThreadExecutor())
+            .setQueryCallback(
+                object : RoomDatabase.QueryCallback {
+                    override fun onQuery(sqlQuery: String, bindArgs: List<Any?>) {
+                        println("SQL Query: $sqlQuery SQL Args: $bindArgs")
+                    }
+                },
+                Executors.newSingleThreadExecutor()
+            )
             .build()
     }
 

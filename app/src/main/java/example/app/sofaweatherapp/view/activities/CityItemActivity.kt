@@ -96,27 +96,27 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
         }
 
         binding.appbarlayout.addOnOffsetChangedListener(object :
-            AppBarLayout.OnOffsetChangedListener {
-            var isShow: Boolean? = null
-            var scrollRange: Int = -1
+                AppBarLayout.OnOffsetChangedListener {
+                var isShow: Boolean? = null
+                var scrollRange: Int = -1
 
-            // Vertical offset -10, -50,
-            // Total scroll range -201
-            override fun onOffsetChanged(appBarLayout: AppBarLayout?, verticalOffset: Int) {
-                if (scrollRange == -1) {
-                    scrollRange = appBarLayout!!.totalScrollRange
-                }
-                if (scrollRange + verticalOffset <= 0) {
-                    if (binding.toolbar.title != locationNameApi) {
-                        binding.toolbar.title = locationNameApi
+                // Vertical offset -10, -50,
+                // Total scroll range -201
+                override fun onOffsetChanged(appBarLayout: AppBarLayout?, verticalOffset: Int) {
+                    if (scrollRange == -1) {
+                        scrollRange = appBarLayout!!.totalScrollRange
                     }
-                    isShow = true
-                } else if (isShow == true) {
-                    binding.toolbar.title = ""
-                    isShow = false
+                    if (scrollRange + verticalOffset <= 0) {
+                        if (binding.toolbar.title != locationNameApi) {
+                            binding.toolbar.title = locationNameApi
+                        }
+                        isShow = true
+                    } else if (isShow == true) {
+                        binding.toolbar.title = ""
+                        isShow = false
+                    }
                 }
-            }
-        })
+            })
     }
 
     private fun fillBasicInformation(
@@ -155,7 +155,7 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
                     getString(R.string.humidity_unit)
                 )
             )
-            //Didnt find accuracy attribute
+            // Didnt find accuracy attribute
             featureAccuracy.setValue(
                 getString(
                     R.string.accuracy_value,
@@ -181,8 +181,10 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
             )
             featureVisibility.setValue(
                 getUnitValueOfAttribute(
-                    unit, this@CityItemActivity,
-                    weatherCurrent, Constants.VISIBILITY
+                    unit,
+                    this@CityItemActivity,
+                    weatherCurrent,
+                    Constants.VISIBILITY
                 )
             )
             if (forecastDays.isNotEmpty()) {
@@ -203,9 +205,10 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.city_menu, menu)
         _menu = menu!!
-        //If data is fetched before menu is created
-        if (initialFavorite != null)
+        // If data is fetched before menu is created
+        if (initialFavorite != null) {
             setInitialFavorite(initialFavorite!!)
+        }
 
         return super.onCreateOptionsMenu(menu)
     }
@@ -229,7 +232,7 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
     }
 
     private fun changeFavorite(item: MenuItem) {
-        //Location loaded
+        // Location loaded
         if (locationNameApi != "") {
             if (item.title!! == getString(R.string.unfavorite)) {
                 item.setIcon(R.drawable.ic_baseline_star_24)

@@ -23,11 +23,17 @@ object UtilityFunctions {
     private val dtf = DateTimeFormatter.ofPattern("EE, MMM dd|HH:mm a").withLocale(Locale.US)
 
     fun makeErrorSnackBar(
-        view: View, anchorView: View?, message: String, context: Context
+        view: View,
+        anchorView: View?,
+        message: String,
+        context: Context
     ): Snackbar {
         val ctw = ContextThemeWrapper(context, R.style.CustomSnackbarTheme)
         return Snackbar.make(
-            ctw, view, message, Snackbar.LENGTH_SHORT
+            ctw,
+            view,
+            message,
+            Snackbar.LENGTH_SHORT
         ).setBackgroundTint(
             ContextCompat.getColor(context, R.color.status_error_snackbar)
         ).setIcon(
@@ -37,11 +43,17 @@ object UtilityFunctions {
     }
 
     fun makeNotifiationSnackBar(
-        view: View, anchorView: View?, message: String, context: Context
+        view: View,
+        anchorView: View?,
+        message: String,
+        context: Context
     ): Snackbar {
         val ctw = ContextThemeWrapper(context, R.style.CustomSnackbarTheme)
         return Snackbar.make(
-            ctw, view, message, Snackbar.LENGTH_SHORT
+            ctw,
+            view,
+            message,
+            Snackbar.LENGTH_SHORT
         ).setBackgroundTint(
             ContextCompat.getColor(context, R.color.neutrals_n_lv_1)
         ).setIcon(
@@ -60,7 +72,8 @@ object UtilityFunctions {
 
     fun getUnitFromSharedPreferences(context: Context) =
         context.getSharedPreferences(Constants.PREF_NAME, Context.MODE_PRIVATE).getString(
-            Constants.UNIT_PREF_KEY, Constants.UNIT_METRIC
+            Constants.UNIT_PREF_KEY,
+            Constants.UNIT_METRIC
         )!!
 
     fun saveUnitPreference(unit: String, context: Context) {
@@ -73,43 +86,54 @@ object UtilityFunctions {
 
     fun getUnitTempValueFromItem(unit: String, context: Context, item: Any): String {
         return when (item) {
-            is WeatherHour -> if (unit == Constants.UNIT_METRIC) context.getString(
-                R.string.temp_value,
-                item.temp_c.toInt().toString(),
-                context.getString(R.string.temp_unit)
-            )
-            else context.getString(
-                R.string.temp_value,
-                item.temp_f.toInt().toString(),
-                context.getString(R.string.temp_unit_F)
-            )
-            is ForecastDay -> if (unit == Constants.UNIT_METRIC) context.getString(
-                R.string.temp_value,
-                item.day.avgtemp_c.toInt().toString(),
-                context.getString(R.string.temp_unit)
-            )
-            else context.getString(
-                R.string.temp_value,
-                item.day.avgtemp_f.toInt().toString(),
-                context.getString(R.string.temp_unit_F)
-            )
-            is WeatherCurrent -> if (unit == Constants.UNIT_METRIC) context.getString(
-                R.string.temp_value,
-                item.temp_c.roundToInt().toString(),
-                context.getString(R.string.temp_unit)
-            )
-            else context.getString(
-                R.string.temp_value,
-                item.temp_f.roundToInt().toString(),
-                context.getString(R.string.temp_unit_F)
-            )
+            is WeatherHour -> if (unit == Constants.UNIT_METRIC) {
+                context.getString(
+                    R.string.temp_value,
+                    item.temp_c.toInt().toString(),
+                    context.getString(R.string.temp_unit)
+                )
+            } else {
+                context.getString(
+                    R.string.temp_value,
+                    item.temp_f.toInt().toString(),
+                    context.getString(R.string.temp_unit_F)
+                )
+            }
+            is ForecastDay -> if (unit == Constants.UNIT_METRIC) {
+                context.getString(
+                    R.string.temp_value,
+                    item.day.avgtemp_c.toInt().toString(),
+                    context.getString(R.string.temp_unit)
+                )
+            } else {
+                context.getString(
+                    R.string.temp_value,
+                    item.day.avgtemp_f.toInt().toString(),
+                    context.getString(R.string.temp_unit_F)
+                )
+            }
+            is WeatherCurrent -> if (unit == Constants.UNIT_METRIC) {
+                context.getString(
+                    R.string.temp_value,
+                    item.temp_c.roundToInt().toString(),
+                    context.getString(R.string.temp_unit)
+                )
+            } else {
+                context.getString(
+                    R.string.temp_value,
+                    item.temp_f.roundToInt().toString(),
+                    context.getString(R.string.temp_unit_F)
+                )
+            }
             else -> ""
         }
     }
 
-
     fun getUnitValueOfAttribute(
-        unit: String, context: Context, item: WeatherCurrent, attribute: String
+        unit: String,
+        context: Context,
+        item: WeatherCurrent,
+        attribute: String
     ): String = when (attribute) {
         Constants.WIND -> context.getString(
             R.string.wind_value,
@@ -131,24 +155,32 @@ object UtilityFunctions {
     }
 
     fun getUnitValueOfMinMaxTemp(
-        unit: String, context: Context, item: ForecastDay
+        unit: String,
+        context: Context,
+        item: ForecastDay
     ): String {
         return if (unit == Constants.UNIT_METRIC) {
             val minTemp = item.day.mintemp_c.toInt().toString()
             val maxTemp = item.day.maxtemp_c.toInt().toString()
             val unitVal = context.getString(R.string.temp_unit)
             context.getString(
-                R.string.temp_min_max_value, minTemp, unitVal, maxTemp, unitVal
+                R.string.temp_min_max_value,
+                minTemp,
+                unitVal,
+                maxTemp,
+                unitVal
             )
         } else {
             val minTemp = item.day.mintemp_f.toInt().toString()
             val maxTemp = item.day.maxtemp_f.toInt().toString()
             val unitVal = context.getString(R.string.temp_unit_F)
             context.getString(
-                R.string.temp_min_max_value, minTemp, unitVal, maxTemp, unitVal
+                R.string.temp_min_max_value,
+                minTemp,
+                unitVal,
+                maxTemp,
+                unitVal
             )
         }
     }
-
-
 }

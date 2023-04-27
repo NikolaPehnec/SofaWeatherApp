@@ -24,5 +24,4 @@ class ReorderHelperCallback(val adapter: ItemTouchHelperAdapter) : ItemTouchHelp
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
     }
-
 }

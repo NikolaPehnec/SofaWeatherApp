@@ -17,7 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ForecastViewModel @Inject constructor(
-    private val weatherRepository: WeatherRepository, private val weatherDao: WeatherDao
+    private val weatherRepository: WeatherRepository,
+    private val weatherDao: WeatherDao
 ) : ViewModel() {
     private val _forecastData = MutableLiveData<WeatherGeneralData>()
     val forecastResponseData: LiveData<WeatherGeneralData> = _forecastData
@@ -57,10 +58,12 @@ class ForecastViewModel @Inject constructor(
     fun updateFavoriteLocation(favorite: Boolean, locationName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             weatherDao.updateFavoriteLocation(favorite, locationName)
-            //If I dont update liveData onCreate of fragment observer is called with old data, then with new fetched data
+            // If I dont update liveData onCreate of fragment observer is called with old data, then with new fetched data
             if (!favorite) {
-                _favoriteForecastListData.postValue(_favoriteForecastListData.value?.filter { it.location.name.lowercase() != locationName }
-                    ?.toList())
+                _favoriteForecastListData.postValue(
+                    _favoriteForecastListData.value?.filter { it.location.name.lowercase() != locationName }
+                        ?.toList()
+                )
             }
         }
     }
