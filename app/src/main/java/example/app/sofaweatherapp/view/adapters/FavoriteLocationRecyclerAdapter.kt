@@ -26,7 +26,7 @@ class FavoriteLocationRecyclerAdapter(
     private var items: MutableList<WeatherGeneralData>,
     private val onFavoriteItemClick: OnFavoriteItemClick,
     private val dragStartListener: OnStartDragListener,
-    var editState: Boolean = false,
+    var editState: Boolean = false
 ) :
     RecyclerView.Adapter<FavoriteLocationRecyclerAdapter.ViewHolderWeather>(),
     ItemTouchHelperAdapter {
