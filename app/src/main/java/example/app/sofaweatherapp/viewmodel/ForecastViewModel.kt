@@ -9,7 +9,6 @@ import example.app.sofaweatherapp.dao.WeatherDao
 import example.app.sofaweatherapp.model.Result
 import example.app.sofaweatherapp.model.WeatherGeneralData
 import example.app.sofaweatherapp.repository.WeatherRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
@@ -30,7 +29,7 @@ class ForecastViewModel @Inject constructor(
     val forecastResponseError: LiveData<String> = _forecastResponseError
 
     fun searchForecast(locationName: String) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             when (val result = weatherRepository.getForecast(locationName)) {
                 is Result.Success -> _forecastData.postValue(result.data)
                 is Result.Error -> _forecastResponseError.postValue(result.exception.message)
@@ -39,7 +38,7 @@ class ForecastViewModel @Inject constructor(
     }
 
     private fun getMultipleForecasts(locationNames: List<String>) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             val weatherData = locationNames.map { name ->
                 async {
                     val result = weatherRepository.getForecast(name)
@@ -56,7 +55,7 @@ class ForecastViewModel @Inject constructor(
     }
 
     fun updateFavoriteLocation(favorite: Boolean, locationName: String) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             weatherDao.updateFavoriteLocation(favorite, locationName)
             // If I dont update liveData onCreate of fragment observer is called with old data, then with new fetched data
             if (!favorite) {
@@ -69,7 +68,7 @@ class ForecastViewModel @Inject constructor(
     }
 
     fun getAllFavoriteLocations() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             val result = weatherDao.getAllFavoriteLocations()
             _favoriteForecastListData.postValue(result)
             getMultipleForecasts(result.map { l -> l.location.name }.toList())
@@ -77,7 +76,7 @@ class ForecastViewModel @Inject constructor(
     }
 
     fun clearAllFavoriteLocations() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             _favoriteForecastListData.postValue(listOf())
             weatherDao.clearAllFavoriteLocations()
         }
