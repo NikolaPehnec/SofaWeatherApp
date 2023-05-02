@@ -26,14 +26,14 @@ class FavoriteLocationRecyclerAdapter(
     private var items: MutableList<WeatherGeneralData>,
     private val onFavoriteItemClick: OnFavoriteItemClick,
     private val dragStartListener: OnStartDragListener,
-    var editState: Boolean = false
+    var editState: Boolean = false,
 ) :
     RecyclerView.Adapter<FavoriteLocationRecyclerAdapter.ViewHolderWeather>(),
     ItemTouchHelperAdapter {
 
-    private var unit = ""
+    val unit: String = getUnitFromSharedPreferences(context)
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderWeather {
-        unit = getUnitFromSharedPreferences(context)
         return ViewHolderWeather(
             LocationFavoriteItemBinding.inflate(
                 LayoutInflater.from(parent.context),
