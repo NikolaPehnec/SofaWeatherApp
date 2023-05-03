@@ -35,6 +35,9 @@ class FavoritesFragment :
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        // val savedState=parentFragmentManager.saveFragmentInstanceState(this)
+        // this.setInitialSavedState(savedState)
+
         _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
         requireActivity().addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
