@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
         binding.viewPager.isUserInputEnabled = false
     }
 
-    //Refresh favorite locations when coming back from CityItemActivity
+    // Refresh favorite locations when coming back from CityItemActivity
     override fun onResume() {
         super.onResume()
         forecastViewModel.getAllFavoriteLocations()

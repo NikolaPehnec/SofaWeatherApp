@@ -32,12 +32,15 @@ class SearchFragment : Fragment() {
     private val searchedLocations = mutableSetOf<Location>()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
 
         searchArrayAdapter = ArrayAdapter(
-            requireContext(), layout.simple_list_item_1
+            requireContext(),
+            layout.simple_list_item_1
         )
 
         binding.autoCompleteTv.setAdapter(searchArrayAdapter)
@@ -77,7 +80,10 @@ class SearchFragment : Fragment() {
 
         citiesViewModel.citiesResponseError.observe(viewLifecycleOwner) { err ->
             UtilityFunctions.makeErrorSnackBar(
-                binding.root, binding.anchorView, err, requireContext()
+                binding.root,
+                binding.anchorView,
+                err,
+                requireContext()
             ).show()
         }
 
@@ -87,7 +93,9 @@ class SearchFragment : Fragment() {
                     requireContext(),
                     R.drawable.ic_baseline_search_24
                 ),
-                null, null, null
+                null,
+                null,
+                null
             )
 
             addTextChangedListener {
@@ -97,10 +105,14 @@ class SearchFragment : Fragment() {
                         R.drawable.ic_baseline_search_24
                     ),
                     null,
-                    if (it.toString().isEmpty()) null else ContextCompat.getDrawable(
-                        requireContext(),
-                        R.drawable.ic_baseline_close_24
-                    ),
+                    if (it.toString().isEmpty()) {
+                        null
+                    } else {
+                        ContextCompat.getDrawable(
+                            requireContext(),
+                            R.drawable.ic_baseline_close_24
+                        )
+                    },
                     null
                 )
 
@@ -123,8 +135,10 @@ class SearchFragment : Fragment() {
                             ) {
                                 binding.autoCompleteTv.setText("")
                                 return true
-                            } else if (event.rawX <= (binding.autoCompleteTv.left +
-                                        binding.autoCompleteTv.compoundDrawables[drawableLeftIndex].bounds.width())
+                            } else if (event.rawX <= (
+                                binding.autoCompleteTv.left +
+                                    binding.autoCompleteTv.compoundDrawables[drawableLeftIndex].bounds.width()
+                                )
                             ) {
                                 startSearch(binding.autoCompleteTv.text.toString().lowercase())
                                 return true
