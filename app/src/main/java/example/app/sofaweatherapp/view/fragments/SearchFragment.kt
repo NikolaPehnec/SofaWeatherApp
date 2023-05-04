@@ -1,7 +1,6 @@
 package example.app.sofaweatherapp.view.fragments
 
 import android.R.layout
-import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -17,7 +16,7 @@ import example.app.sofaweatherapp.databinding.FragmentSearchBinding
 import example.app.sofaweatherapp.model.Location
 import example.app.sofaweatherapp.utils.Constants
 import example.app.sofaweatherapp.utils.UtilityFunctions
-import example.app.sofaweatherapp.view.activities.CityItemActivity
+import example.app.sofaweatherapp.utils.UtilityFunctions.startCityItemActivity
 import example.app.sofaweatherapp.viewmodel.CitiesViewModel
 
 @AndroidEntryPoint
@@ -99,7 +98,7 @@ class SearchFragment : Fragment() {
                 if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
                     binding.autoCompleteTv.text.toString().apply {
                         if (this.length > 2) {
-                            startCityItemActivity(this.lowercase().trim())
+                            startCityItemActivity(this.lowercase().trim(), requireContext())
                         } else {
                             UtilityFunctions.makeErrorSnackBar(
                                 binding.root,
@@ -115,7 +114,7 @@ class SearchFragment : Fragment() {
             }
 
             setOnItemClickListener { _, _, position, _ ->
-                startCityItemActivity(adapter.getItem(position).toString())
+                startCityItemActivity(adapter.getItem(position).toString(), requireContext())
             }
         }
     }
@@ -126,13 +125,6 @@ class SearchFragment : Fragment() {
                 .toList()
         searchArrayAdapter.clear()
         searchArrayAdapter.addAll(filteredLocations.map { l -> l.name })
-    }
-
-    private fun startCityItemActivity(locationName: String) {
-        val intent = Intent(requireContext(), CityItemActivity::class.java).apply {
-            putExtra(getString(R.string.location_key), locationName)
-        }
-        startActivity(intent)
     }
 
     override fun onDestroyView() {

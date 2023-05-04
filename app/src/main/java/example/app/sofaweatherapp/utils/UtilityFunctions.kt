@@ -1,15 +1,19 @@
 package example.app.sofaweatherapp.utils
 
 import android.content.Context
+import android.content.Intent
 import android.view.ContextThemeWrapper
 import android.view.View
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
+import androidx.core.os.bundleOf
 import com.google.android.material.snackbar.Snackbar
 import example.app.sofaweatherapp.R
 import example.app.sofaweatherapp.model.ForecastDay
 import example.app.sofaweatherapp.model.WeatherCurrent
 import example.app.sofaweatherapp.model.WeatherHour
+import example.app.sofaweatherapp.view.activities.CityItemActivity
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.ZoneId
@@ -99,6 +103,7 @@ object UtilityFunctions {
                     context.getString(R.string.temp_unit_F)
                 )
             }
+
             is ForecastDay -> if (unit == Constants.UNIT_METRIC) {
                 context.getString(
                     R.string.temp_value,
@@ -112,6 +117,7 @@ object UtilityFunctions {
                     context.getString(R.string.temp_unit_F)
                 )
             }
+
             is WeatherCurrent -> if (unit == Constants.UNIT_METRIC) {
                 context.getString(
                     R.string.temp_value,
@@ -125,6 +131,7 @@ object UtilityFunctions {
                     context.getString(R.string.temp_unit_F)
                 )
             }
+
             else -> ""
         }
     }
@@ -141,16 +148,19 @@ object UtilityFunctions {
             context.getString(if (unit == Constants.UNIT_METRIC) R.string.wind_unit else R.string.wind_unit_mph),
             item.wind_dir
         )
+
         Constants.PRESSURE -> context.getString(
             R.string.pressure_value,
             if (unit == Constants.UNIT_METRIC) item.pressure_mb.toString() else item.pressure_in.toString(),
             context.getString(if (unit == Constants.UNIT_METRIC) R.string.pressure_unit else R.string.pressure_unit_imp)
         )
+
         Constants.VISIBILITY -> context.getString(
             R.string.visibility_value,
             if (unit == Constants.UNIT_METRIC) item.vis_km.toString() else item.vis_miles.toString(),
             context.getString(if (unit == Constants.UNIT_METRIC) R.string.visibility_unit else R.string.visibility_unit_miles)
         )
+
         else -> ""
     }
 
@@ -182,5 +192,12 @@ object UtilityFunctions {
                 unitVal
             )
         }
+    }
+
+    fun startCityItemActivity(locationName: String, context: Context) {
+        val intent = Intent(context, CityItemActivity::class.java).apply {
+            putExtra(context.getString(R.string.location_key), locationName)
+        }
+        startActivity(context, intent, bundleOf())
     }
 }

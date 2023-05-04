@@ -13,13 +13,14 @@ import example.app.sofaweatherapp.R
 import example.app.sofaweatherapp.databinding.FragmentFavoritesBinding
 import example.app.sofaweatherapp.utils.OnStartDragListener
 import example.app.sofaweatherapp.utils.ReorderHelperCallback
+import example.app.sofaweatherapp.utils.UtilityFunctions.startCityItemActivity
 import example.app.sofaweatherapp.view.adapters.FavoriteLocationRecyclerAdapter
 import example.app.sofaweatherapp.viewmodel.ForecastViewModel
 
 @AndroidEntryPoint
 class FavoritesFragment :
     Fragment(),
-    FavoriteLocationRecyclerAdapter.OnFavoriteItemClick,
+    FavoriteLocationRecyclerAdapter.OnItemClick,
     MenuProvider,
     OnStartDragListener {
 
@@ -35,9 +36,6 @@ class FavoritesFragment :
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // val savedState=parentFragmentManager.saveFragmentInstanceState(this)
-        // this.setInitialSavedState(savedState)
-
         _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
         requireActivity().addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
@@ -70,6 +68,10 @@ class FavoritesFragment :
         forecastViewModel.updateFavoriteLocation(favorite, locationName)
     }
 
+    override fun onItemClick(locationName: String) {
+        startCityItemActivity(locationName, requireContext())
+    }
+
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
         mMenu = menu
         menuInflater.inflate(R.menu.favorite_fragment_menu, menu)
@@ -83,12 +85,14 @@ class FavoritesFragment :
                 mMenu?.findItem(R.id.done)?.isVisible = true
                 return true
             }
+
             R.id.done -> {
                 favoriteLocationsRecyclerAdapter.setRecyclerEditState(false)
                 menuItem.isVisible = false
                 mMenu?.findItem(R.id.edit)?.isVisible = true
                 return true
             }
+
             else -> false
         }
     }

@@ -24,7 +24,7 @@ import java.util.*
 class FavoriteLocationRecyclerAdapter(
     private val context: Context,
     private var items: MutableList<WeatherGeneralData>,
-    private val onFavoriteItemClick: OnFavoriteItemClick,
+    private val onItemClick: OnItemClick,
     private val dragStartListener: OnStartDragListener,
     var editState: Boolean = false
 ) :
@@ -110,8 +110,9 @@ class FavoriteLocationRecyclerAdapter(
 
     override fun getItemCount(): Int = items.size
 
-    interface OnFavoriteItemClick {
+    interface OnItemClick {
         fun onFavoriteItemClick(favorite: Boolean, locationName: String)
+        fun onItemClick(locationName: String)
     }
 
     inner class ViewHolderWeather(
@@ -145,8 +146,11 @@ class FavoriteLocationRecyclerAdapter(
                         R.drawable.ic_baseline_star_outline_24
                     )
                 )
-                onFavoriteItemClick.onFavoriteItemClick(false, item.location.name.lowercase())
+                onItemClick.onFavoriteItemClick(false, item.location.name.lowercase())
                 removeItem(item)
+            }
+            binding.cv.setOnClickListener {
+                onItemClick.onItemClick(item.location.name.lowercase())
             }
 
             binding.reorderim?.setOnTouchListener(
