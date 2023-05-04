@@ -1,7 +1,12 @@
 package example.app.sofaweatherapp.view.fragments
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -13,7 +18,7 @@ import example.app.sofaweatherapp.R
 import example.app.sofaweatherapp.databinding.FragmentFavoritesBinding
 import example.app.sofaweatherapp.utils.OnStartDragListener
 import example.app.sofaweatherapp.utils.ReorderHelperCallback
-import example.app.sofaweatherapp.utils.UtilityFunctions.startCityItemActivity
+import example.app.sofaweatherapp.view.activities.CityItemActivity
 import example.app.sofaweatherapp.view.adapters.FavoriteLocationRecyclerAdapter
 import example.app.sofaweatherapp.viewmodel.ForecastViewModel
 
@@ -69,7 +74,7 @@ class FavoritesFragment :
     }
 
     override fun onItemClick(locationName: String) {
-        startCityItemActivity(locationName, requireContext())
+        CityItemActivity.start(locationName, requireContext())
     }
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {

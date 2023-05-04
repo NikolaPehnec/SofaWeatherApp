@@ -1,19 +1,15 @@
 package example.app.sofaweatherapp.utils
 
 import android.content.Context
-import android.content.Intent
 import android.view.ContextThemeWrapper
 import android.view.View
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.startActivity
-import androidx.core.os.bundleOf
 import com.google.android.material.snackbar.Snackbar
 import example.app.sofaweatherapp.R
 import example.app.sofaweatherapp.model.ForecastDay
 import example.app.sofaweatherapp.model.WeatherCurrent
 import example.app.sofaweatherapp.model.WeatherHour
-import example.app.sofaweatherapp.view.activities.CityItemActivity
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.ZoneId
@@ -192,12 +188,5 @@ object UtilityFunctions {
                 unitVal
             )
         }
-    }
-
-    fun startCityItemActivity(locationName: String, context: Context) {
-        val intent = Intent(context, CityItemActivity::class.java).apply {
-            putExtra(context.getString(R.string.location_key), locationName)
-        }
-        startActivity(context, intent, bundleOf())
     }
 }

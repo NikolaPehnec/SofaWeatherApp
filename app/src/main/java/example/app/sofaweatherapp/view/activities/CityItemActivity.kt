@@ -1,10 +1,14 @@
 package example.app.sofaweatherapp.view.activities
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat.startActivity
+import androidx.core.os.bundleOf
 import coil.load
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.snackbar.Snackbar
@@ -36,6 +40,15 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
     private var unit = ""
     private var initialFavorite: Boolean? = null
     private lateinit var _menu: Menu
+
+    companion object {
+        fun start(locationName: String, context: Context) {
+            val intent = Intent(context, CityItemActivity::class.java).apply {
+                putExtra(context.getString(R.string.location_key), locationName)
+            }
+            startActivity(context, intent, bundleOf())
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

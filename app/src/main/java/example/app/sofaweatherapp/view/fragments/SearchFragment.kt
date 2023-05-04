@@ -19,7 +19,7 @@ import example.app.sofaweatherapp.databinding.FragmentSearchBinding
 import example.app.sofaweatherapp.model.Location
 import example.app.sofaweatherapp.utils.Constants
 import example.app.sofaweatherapp.utils.UtilityFunctions
-import example.app.sofaweatherapp.utils.UtilityFunctions.startCityItemActivity
+import example.app.sofaweatherapp.view.activities.CityItemActivity
 import example.app.sofaweatherapp.viewmodel.CitiesViewModel
 
 @AndroidEntryPoint
@@ -32,12 +32,15 @@ class SearchFragment : Fragment() {
     private val searchedLocations = mutableSetOf<Location>()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
 
         searchArrayAdapter = ArrayAdapter(
-            requireContext(), layout.simple_list_item_1
+            requireContext(),
+            layout.simple_list_item_1
         )
 
         binding.autoCompleteTv.setAdapter(searchArrayAdapter)
@@ -77,28 +80,40 @@ class SearchFragment : Fragment() {
 
         citiesViewModel.citiesResponseError.observe(viewLifecycleOwner) { err ->
             UtilityFunctions.makeErrorSnackBar(
-                binding.root, binding.anchorView, err, requireContext()
+                binding.root,
+                binding.anchorView,
+                err,
+                requireContext()
             ).show()
         }
 
         binding.autoCompleteTv.apply {
             setCompoundDrawablesWithIntrinsicBounds(
                 ContextCompat.getDrawable(
-                    requireContext(), R.drawable.ic_baseline_search_24
-                ), null, null, null
+                    requireContext(),
+                    R.drawable.ic_baseline_search_24
+                ),
+                null,
+                null,
+                null
             )
 
             addTextChangedListener {
                 setCompoundDrawablesWithIntrinsicBounds(
                     ContextCompat.getDrawable(
-                        requireContext(), R.drawable.ic_baseline_search_24
-                    ), null, if (it.toString().isEmpty()) {
+                        requireContext(),
+                        R.drawable.ic_baseline_search_24
+                    ),
+                    null,
+                    if (it.toString().isEmpty()) {
                         null
                     } else {
                         ContextCompat.getDrawable(
-                            requireContext(), R.drawable.ic_baseline_close_24
+                            requireContext(),
+                            R.drawable.ic_baseline_close_24
                         )
-                    }, null
+                    },
+                    null
                 )
 
                 // On treshold call api, after api perform local filtering
@@ -140,14 +155,14 @@ class SearchFragment : Fragment() {
             }
 
             setOnItemClickListener { _, _, position, _ ->
-                startCityItemActivity(adapter.getItem(position).toString(), requireContext())
+                CityItemActivity.start(adapter.getItem(position).toString(), requireContext())
             }
         }
     }
 
     private fun startSearch(searchString: String) {
         if (searchString.length > 2) {
-            startCityItemActivity(searchString.lowercase().trim(), requireContext())
+            CityItemActivity.start(searchString.lowercase().trim(), requireContext())
         } else {
             UtilityFunctions.makeErrorSnackBar(
                 binding.root,
