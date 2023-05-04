@@ -33,6 +33,7 @@ class MainActivity : AppCompatActivity() {
                     binding.activityToolbar.visibility = View.INVISIBLE
                     true
                 }
+
                 R.id.navigation_favorites -> {
                     forecastViewModel.getAllFavoriteLocations()
                     binding.viewPager.currentItem = 1
@@ -40,16 +41,20 @@ class MainActivity : AppCompatActivity() {
                     binding.activityToolbar.title = getString(R.string.my_cities)
                     true
                 }
+
                 R.id.navigation_settings -> {
                     binding.viewPager.currentItem = 2
                     binding.activityToolbar.visibility = View.VISIBLE
                     binding.activityToolbar.title = getString(R.string.settings)
                     true
                 }
+
                 else -> false
             }
         }
+
         binding.activityToolbar.visibility = View.INVISIBLE
+        binding.viewPager.isUserInputEnabled = false
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

@@ -77,6 +77,23 @@ class FavoriteLocationRecyclerAdapter(
                 notifyItemInserted(items.size - 1)
             }
         }
+
+        // Checking if new list of items has any of the old items removed
+        val itemsToDelete = mutableListOf<WeatherGeneralData>()
+        for (oldItem in items) {
+            var deletedItem = true
+            if (newItems.any { ni -> ni.location.name == oldItem.location.name }) {
+                deletedItem = false
+            }
+            if (deletedItem) {
+                itemsToDelete.add(oldItem)
+            }
+        }
+        for (item in itemsToDelete) {
+            val indexDeleted = items.indexOf(item)
+            items.remove(item)
+            notifyItemRemoved(indexDeleted)
+        }
     }
 
     fun removeItem(item: WeatherGeneralData) {
