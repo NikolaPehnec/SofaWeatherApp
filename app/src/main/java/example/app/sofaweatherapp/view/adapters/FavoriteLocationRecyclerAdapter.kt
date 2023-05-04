@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.MotionEventCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import example.app.sofaweatherapp.R
@@ -19,6 +20,7 @@ import example.app.sofaweatherapp.utils.OnStartDragListener
 import example.app.sofaweatherapp.utils.UtilityFunctions
 import example.app.sofaweatherapp.utils.UtilityFunctions.getUnitFromSharedPreferences
 import example.app.sofaweatherapp.utils.UtilityFunctions.getUnitTempValueFromItem
+import example.app.sofaweatherapp.utils.WeatherDiffUtilCallback
 import java.util.*
 
 class FavoriteLocationRecyclerAdapter(
@@ -64,42 +66,11 @@ class FavoriteLocationRecyclerAdapter(
         }
     }
 
-    fun addItems(newItems: List<WeatherGeneralData>) {
-        for (item in newItems) {
-            if (items.any { i -> i.location.name == item.location.name }) {
-                val position = items.indexOf(
-                    items.first { i -> i.location.name == item.location.name }
-                )
-                items[position] = item
-                notifyItemChanged(position, Constants.UPDATE_PAYLOAD)
-            } else {
-                items.add(item)
-                notifyItemInserted(items.size - 1)
-            }
-        }
-
-        // Checking if new list of items has any of the old items removed
-        val itemsToDelete = mutableListOf<WeatherGeneralData>()
-        for (oldItem in items) {
-            var deletedItem = true
-            if (newItems.any { ni -> ni.location.name == oldItem.location.name }) {
-                deletedItem = false
-            }
-            if (deletedItem) {
-                itemsToDelete.add(oldItem)
-            }
-        }
-        for (item in itemsToDelete) {
-            val indexDeleted = items.indexOf(item)
-            items.remove(item)
-            notifyItemRemoved(indexDeleted)
-        }
-    }
-
-    fun removeItem(item: WeatherGeneralData) {
-        val index = items.indexOf(item)
-        items.removeAt(index)
-        notifyItemRemoved(index)
+    fun setItems(newItems: List<WeatherGeneralData>) {
+        val diffResult = DiffUtil.calculateDiff(WeatherDiffUtilCallback(items, newItems))
+        items.clear()
+        items.addAll(newItems)
+        diffResult.dispatchUpdatesTo(this)
     }
 
     fun setRecyclerEditState(newEditState: Boolean) {
@@ -147,7 +118,6 @@ class FavoriteLocationRecyclerAdapter(
                     )
                 )
                 onItemClick.onFavoriteItemClick(false, item.location.name.lowercase())
-                removeItem(item)
             }
             binding.cv.setOnClickListener {
                 onItemClick.onItemClick(item.location.name.lowercase())

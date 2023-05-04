@@ -55,7 +55,7 @@ class FavoritesFragment :
 
     private fun setListeners() {
         forecastViewModel.favoriteForecastListData.observe(viewLifecycleOwner) { favoriteData ->
-            favoriteLocationsRecyclerAdapter.addItems(favoriteData)
+            favoriteLocationsRecyclerAdapter.setItems(favoriteData)
         }
     }
 

@@ -32,15 +32,12 @@ class SearchFragment : Fragment() {
     private val searchedLocations = mutableSetOf<Location>()
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
 
         searchArrayAdapter = ArrayAdapter(
-            requireContext(),
-            layout.simple_list_item_1
+            requireContext(), layout.simple_list_item_1
         )
 
         binding.autoCompleteTv.setAdapter(searchArrayAdapter)
@@ -80,40 +77,28 @@ class SearchFragment : Fragment() {
 
         citiesViewModel.citiesResponseError.observe(viewLifecycleOwner) { err ->
             UtilityFunctions.makeErrorSnackBar(
-                binding.root,
-                binding.anchorView,
-                err,
-                requireContext()
+                binding.root, binding.anchorView, err, requireContext()
             ).show()
         }
 
         binding.autoCompleteTv.apply {
             setCompoundDrawablesWithIntrinsicBounds(
                 ContextCompat.getDrawable(
-                    requireContext(),
-                    R.drawable.ic_baseline_search_24
-                ),
-                null,
-                null,
-                null
+                    requireContext(), R.drawable.ic_baseline_search_24
+                ), null, null, null
             )
 
             addTextChangedListener {
                 setCompoundDrawablesWithIntrinsicBounds(
                     ContextCompat.getDrawable(
-                        requireContext(),
-                        R.drawable.ic_baseline_search_24
-                    ),
-                    null,
-                    if (it.toString().isEmpty()) {
+                        requireContext(), R.drawable.ic_baseline_search_24
+                    ), null, if (it.toString().isEmpty()) {
                         null
                     } else {
                         ContextCompat.getDrawable(
-                            requireContext(),
-                            R.drawable.ic_baseline_close_24
+                            requireContext(), R.drawable.ic_baseline_close_24
                         )
-                    },
-                    null
+                    }, null
                 )
 
                 // On treshold call api, after api perform local filtering
@@ -131,15 +116,10 @@ class SearchFragment : Fragment() {
 
                     if (event?.action == MotionEvent.ACTION_UP) {
                         binding.autoCompleteTv.compoundDrawables[drawableRightIndex]?.let {
-                            if (event.rawX >= (binding.autoCompleteTv.right - it.bounds.width())
-                            ) {
+                            if (event.rawX >= (binding.autoCompleteTv.right - it.bounds.width())) {
                                 binding.autoCompleteTv.setText("")
                                 return true
-                            } else if (event.rawX <= (
-                                binding.autoCompleteTv.left +
-                                    binding.autoCompleteTv.compoundDrawables[drawableLeftIndex].bounds.width()
-                                )
-                            ) {
+                            } else if (event.rawX <= (binding.autoCompleteTv.left + binding.autoCompleteTv.compoundDrawables[drawableLeftIndex].bounds.width())) {
                                 startSearch(binding.autoCompleteTv.text.toString().lowercase())
                                 return true
                             }
