@@ -4,9 +4,12 @@ import android.R.layout
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
+import android.view.View.OnTouchListener
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -29,15 +32,12 @@ class SearchFragment : Fragment() {
     private val searchedLocations = mutableSetOf<Location>()
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
 
         searchArrayAdapter = ArrayAdapter(
-            requireContext(),
-            layout.simple_list_item_1
+            requireContext(), layout.simple_list_item_1
         )
 
         binding.autoCompleteTv.setAdapter(searchArrayAdapter)
@@ -77,15 +77,33 @@ class SearchFragment : Fragment() {
 
         citiesViewModel.citiesResponseError.observe(viewLifecycleOwner) { err ->
             UtilityFunctions.makeErrorSnackBar(
-                binding.root,
-                binding.anchorView,
-                err,
-                requireContext()
+                binding.root, binding.anchorView, err, requireContext()
             ).show()
         }
 
         binding.autoCompleteTv.apply {
+            setCompoundDrawablesWithIntrinsicBounds(
+                ContextCompat.getDrawable(
+                    requireContext(),
+                    R.drawable.ic_baseline_search_24
+                ),
+                null, null, null
+            )
+
             addTextChangedListener {
+                setCompoundDrawablesWithIntrinsicBounds(
+                    ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.ic_baseline_search_24
+                    ),
+                    null,
+                    if (it.toString().isEmpty()) null else ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.ic_baseline_close_24
+                    ),
+                    null
+                )
+
                 // On treshold call api, after api perform local filtering
                 if (it.toString().length == Constants.SEARCH_TRESHOLD) {
                     citiesViewModel.searchCities(it.toString())
@@ -94,19 +112,33 @@ class SearchFragment : Fragment() {
                 }
             }
 
+            setOnTouchListener(object : OnTouchListener {
+                override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+                    val drawableLeftIndex = 0
+                    val drawableRightIndex = 2
+
+                    if (event?.action == MotionEvent.ACTION_UP) {
+                        binding.autoCompleteTv.compoundDrawables[drawableRightIndex]?.let {
+                            if (event.rawX >= (binding.autoCompleteTv.right - it.bounds.width())
+                            ) {
+                                binding.autoCompleteTv.setText("")
+                                return true
+                            } else if (event.rawX <= (binding.autoCompleteTv.left +
+                                        binding.autoCompleteTv.compoundDrawables[drawableLeftIndex].bounds.width())
+                            ) {
+                                startSearch(binding.autoCompleteTv.text.toString().lowercase())
+                                return true
+                            }
+                        }
+                    }
+                    return false
+                }
+            })
+
             setOnKeyListener { _, keyCode, event ->
                 if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
                     binding.autoCompleteTv.text.toString().apply {
-                        if (this.length > 2) {
-                            startCityItemActivity(this.lowercase().trim(), requireContext())
-                        } else {
-                            UtilityFunctions.makeErrorSnackBar(
-                                binding.root,
-                                binding.anchorView,
-                                getString(R.string.err_search_small),
-                                requireContext()
-                            ).show()
-                        }
+                        startSearch(this)
                     }
                     return@setOnKeyListener true
                 }
@@ -116,6 +148,19 @@ class SearchFragment : Fragment() {
             setOnItemClickListener { _, _, position, _ ->
                 startCityItemActivity(adapter.getItem(position).toString(), requireContext())
             }
+        }
+    }
+
+    private fun startSearch(searchString: String) {
+        if (searchString.length > 2) {
+            startCityItemActivity(searchString.lowercase().trim(), requireContext())
+        } else {
+            UtilityFunctions.makeErrorSnackBar(
+                binding.root,
+                binding.anchorView,
+                getString(R.string.err_search_small),
+                requireContext()
+            ).show()
         }
     }
 
