@@ -1,12 +1,14 @@
 package example.app.sofaweatherapp.view.activities
 
 import android.content.Context
-import android.os.Build
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat.startActivity
+import androidx.core.os.bundleOf
 import coil.load
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.snackbar.Snackbar
@@ -18,10 +20,13 @@ import example.app.sofaweatherapp.model.LocationDetail
 import example.app.sofaweatherapp.model.WeatherCurrent
 import example.app.sofaweatherapp.utils.Constants
 import example.app.sofaweatherapp.utils.UtilityFunctions
+import example.app.sofaweatherapp.utils.UtilityFunctions.getUnitTempValueFromItem
+import example.app.sofaweatherapp.utils.UtilityFunctions.getUnitValueOfAttribute
+import example.app.sofaweatherapp.utils.UtilityFunctions.getUnitValueOfMinMaxTemp
+import example.app.sofaweatherapp.utils.getLocationNameFromIntent
 import example.app.sofaweatherapp.view.adapters.WeatherRecyclerAdapter
 import example.app.sofaweatherapp.view.fragments.MapsFragment
 import example.app.sofaweatherapp.viewmodel.ForecastViewModel
-import kotlin.math.roundToInt
 
 @AndroidEntryPoint
 class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClickListener {
@@ -33,6 +38,18 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
     private lateinit var todayWeatherRecyclerAdapter: WeatherRecyclerAdapter
     private lateinit var nextDaysWeatherRecyclerAdapter: WeatherRecyclerAdapter
     private var unit = ""
+    private var initialFavorite: Boolean? = null
+    private lateinit var _menu: Menu
+
+    companion object {
+        fun start(locationName: String, context: Context) {
+            val intent = Intent(context, CityItemActivity::class.java).apply {
+                putExtra(context.getString(R.string.location_key), locationName)
+            }
+            startActivity(context, intent, bundleOf())
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -48,20 +65,8 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
         binding.todayWeatherRv.adapter = todayWeatherRecyclerAdapter
         binding.nextDaysWeatherRv.adapter = nextDaysWeatherRecyclerAdapter
 
-        unit = getSharedPreferences("MY_PREFERENCES", Context.MODE_PRIVATE).getString(
-            "UNIT",
-            "Metric"
-        )!!
-
-        locationName = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getSerializableExtra(
-                getString(R.string.location_key),
-                String::class.java
-            ) as String
-        } else {
-            intent.getSerializableExtra(getString(R.string.location_key)) as String
-        }
-
+        unit = UtilityFunctions.getUnitFromSharedPreferences(this)
+        locationName = getLocationNameFromIntent(intent)
         forecastViewModel.searchForecast(locationName)
 
         setListeners()
@@ -75,6 +80,8 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
 
     private fun setListeners() {
         forecastViewModel.forecastResponseData.observe(this) { forecastData ->
+            initialFavorite = forecastData.favorite
+            setInitialFavorite(initialFavorite ?: false)
             fillBasicInformation(forecastData.location, forecastData.current)
             fillWeatherFeatures(forecastData.current, forecastData.forecastDays)
 
@@ -90,7 +97,7 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
             }
         }
 
-        // Show error, finish actvitiy
+        // Show error, finish activitiy
         forecastViewModel.forecastResponseError.observe(this) { err ->
             UtilityFunctions.makeErrorSnackBar(binding.root, null, err, this)
                 .addCallback(object : Snackbar.Callback() {
@@ -143,20 +150,8 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
 
                 conditionText.text = weatherCurrent.condition.text
                 weatherImage.load(Constants.HTTPS_PREFIX + weatherCurrent.condition.icon)
-
-                if (unit == "Metric") {
-                    temperature.text = getString(
-                        R.string.temp_value,
-                        weatherCurrent.temp_c.roundToInt().toString(),
-                        getString(R.string.temp_unit)
-                    )
-                } else {
-                    temperature.text = getString(
-                        R.string.temp_value,
-                        weatherCurrent.temp_f.roundToInt().toString(),
-                        getString(R.string.temp_unit_F)
-                    )
-                }
+                temperature.text =
+                    getUnitTempValueFromItem(unit, this@CityItemActivity, weatherCurrent)
             }
         }
     }
@@ -181,83 +176,38 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
                     getString(R.string.accuracy_unit)
                 )
             )
-
-            if (unit == "Metric") {
-                featureWind.setValue(
-                    getString(
-                        R.string.wind_value,
-                        weatherCurrent.wind_kph.toString(),
-                        getString(R.string.wind_unit),
-                        weatherCurrent.wind_dir
+            featureWind.setValue(
+                getUnitValueOfAttribute(
+                    unit,
+                    this@CityItemActivity,
+                    weatherCurrent,
+                    Constants.WIND
+                )
+            )
+            featurePressure.setValue(
+                getUnitValueOfAttribute(
+                    unit,
+                    this@CityItemActivity,
+                    weatherCurrent,
+                    Constants.PRESSURE
+                )
+            )
+            featureVisibility.setValue(
+                getUnitValueOfAttribute(
+                    unit,
+                    this@CityItemActivity,
+                    weatherCurrent,
+                    Constants.VISIBILITY
+                )
+            )
+            if (forecastDays.isNotEmpty()) {
+                featureTemp.setValue(
+                    getUnitValueOfMinMaxTemp(
+                        unit,
+                        this@CityItemActivity,
+                        forecastDays[0]
                     )
                 )
-                featurePressure.setValue(
-                    getString(
-                        R.string.pressure_value,
-                        weatherCurrent.pressure_mb.toString(),
-                        getString(R.string.pressure_unit)
-                    )
-                )
-                featureVisibility.setValue(
-                    getString(
-                        R.string.visibility_value,
-                        weatherCurrent.vis_km.toString(),
-                        getString(R.string.visibility_unit)
-                    )
-                )
-                // Min, max value only in day forecasts
-                if (forecastDays.isNotEmpty()) {
-                    val minTemp = forecastDays[0].day.mintemp_c.toInt().toString()
-                    val maxTemp = forecastDays[0].day.maxtemp_c.toInt().toString()
-                    val unit = getString(R.string.temp_unit)
-                    featureTemp.setValue(
-                        getString(
-                            R.string.temp_min_max_value,
-                            minTemp,
-                            unit,
-                            maxTemp,
-                            unit
-                        )
-                    )
-                }
-            } else {
-                featureWind.setValue(
-                    getString(
-                        R.string.wind_value,
-                        weatherCurrent.wind_mph.toString(),
-                        getString(R.string.wind_unit_mph),
-                        weatherCurrent.wind_dir
-                    )
-                )
-                featurePressure.setValue(
-                    getString(
-                        R.string.pressure_value,
-                        weatherCurrent.pressure_in.toString(),
-                        getString(R.string.pressure_unit_imp)
-                    )
-                )
-                featureVisibility.setValue(
-                    getString(
-                        R.string.visibility_value,
-                        weatherCurrent.vis_miles.toString(),
-                        getString(R.string.visibility_unit_miles)
-                    )
-                )
-                // Min, max value only in day forecasts
-                if (forecastDays.isNotEmpty()) {
-                    val minTemp = forecastDays[0].day.mintemp_f.toInt().toString()
-                    val maxTemp = forecastDays[0].day.maxtemp_f.toInt().toString()
-                    val unit = getString(R.string.temp_unit_F)
-                    featureTemp.setValue(
-                        getString(
-                            R.string.temp_min_max_value,
-                            minTemp,
-                            unit,
-                            maxTemp,
-                            unit
-                        )
-                    )
-                }
             }
         }
     }
@@ -267,6 +217,11 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.city_menu, menu)
+        _menu = menu!!
+        // If data is fetched before menu is created
+        if (initialFavorite != null) {
+            setInitialFavorite(initialFavorite!!)
+        }
 
         return super.onCreateOptionsMenu(menu)
     }
@@ -280,13 +235,27 @@ class CityItemActivity : AppCompatActivity(), WeatherRecyclerAdapter.OnItemClick
         return super.onOptionsItemSelected(item)
     }
 
+    private fun setInitialFavorite(favorite: Boolean) {
+        if (::_menu.isInitialized) {
+            _menu.findItem(R.id.favorite)
+                .setIcon(if (favorite) R.drawable.ic_baseline_star_24 else R.drawable.ic_baseline_star_outline_24)
+            _menu.findItem(R.id.favorite).title =
+                getString(if (favorite) R.string.favorite else R.string.unfavorite)
+        }
+    }
+
     private fun changeFavorite(item: MenuItem) {
-        if (item.title!! == getString(R.string.favorite)) {
-            item.setIcon(R.drawable.ic_baseline_star_24)
-            item.title = getString(R.string.unfavorite)
-        } else {
-            item.setIcon(R.drawable.ic_baseline_star_outline_24)
-            item.title = getString(R.string.favorite)
+        // Location loaded
+        if (locationNameApi != "") {
+            if (item.title!! == getString(R.string.unfavorite)) {
+                item.setIcon(R.drawable.ic_baseline_star_24)
+                item.title = getString(R.string.favorite)
+                forecastViewModel.updateFavoriteLocation(true, locationNameApi.lowercase())
+            } else {
+                item.setIcon(R.drawable.ic_baseline_star_outline_24)
+                item.title = getString(R.string.unfavorite)
+                forecastViewModel.updateFavoriteLocation(false, locationNameApi.lowercase())
+            }
         }
     }
 }

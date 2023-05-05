@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import example.app.sofaweatherapp.model.Location
 import example.app.sofaweatherapp.model.Result
-import example.app.sofaweatherapp.networking.WeatherRepository
+import example.app.sofaweatherapp.repository.WeatherRepository
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

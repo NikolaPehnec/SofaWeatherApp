@@ -19,12 +19,22 @@
     <string name="accuracy_title">PRECIZNOST</string>
     <string name="view_more">VIDI JOŠ</string>
 
+    <string name="my_cities">Moji gradovi</string>
+
     <string name="language">Jezik</string>
     <string name="city">Grad</string>
     <string name="settings">Postavke</string>
+    <string name="unit_type_text">Odaberi sustav mjerenja</string>
 
     <string name="metric">Metrički</string>
     <string name="imperial">Imperijalni</string>
+    <string name="clear_my_cities_list">OČISTI MOJE GRADOVE</string>
+    <string name="cancel">Odustani</string>
+    <string name="clear">Očisti</string>
+    <string name="clear_my_cities_dialog_title">Očisti moje gradove?</string>
+    <string name="clear_my_cities_dialog_mess">Ako očistite listu gradova, moji gradovi ekran će biti prazan.</string>
+    <string name="clear_my_cities_after_message">Lista gradova je čista.</string>
+
     <string-array name="languages">
         <item>Engleski</item>
         <item>Hrvatski</item>

@@ -1,33 +1,69 @@
 package example.app.sofaweatherapp.view.activities
 
 import android.os.Bundle
-import android.util.Log
+import android.view.MenuItem
+import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
-import androidx.navigation.ui.setupWithNavController
 import dagger.hilt.android.AndroidEntryPoint
 import example.app.sofaweatherapp.R
 import example.app.sofaweatherapp.databinding.ActivityMainBinding
+import example.app.sofaweatherapp.view.adapters.ScreenSlidePagerAdapter
+import example.app.sofaweatherapp.viewmodel.ForecastViewModel
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private val forecastViewModel: ForecastViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        // setSupportActionBar(binding.toolbar)
+        setSupportActionBar(binding.activityToolbar)
 
-        val bottomNavigationView = binding.navView
-        val navController = findNavController(R.id.nav_host_fragment_activity_main)
-        bottomNavigationView.setupWithNavController(navController)
+        val pagerAdapter = ScreenSlidePagerAdapter(this)
+        binding.viewPager.adapter = pagerAdapter
+        binding.navView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.navigation_home -> {
+                    binding.viewPager.currentItem = 0
+                    binding.activityToolbar.visibility = View.INVISIBLE
+                    true
+                }
+
+                R.id.navigation_favorites -> {
+                    forecastViewModel.getAllFavoriteLocations()
+                    binding.viewPager.currentItem = 1
+                    binding.activityToolbar.visibility = View.VISIBLE
+                    binding.activityToolbar.title = getString(R.string.my_cities)
+                    true
+                }
+
+                R.id.navigation_settings -> {
+                    binding.viewPager.currentItem = 2
+                    binding.activityToolbar.visibility = View.VISIBLE
+                    binding.activityToolbar.title = getString(R.string.settings)
+                    true
+                }
+
+                else -> false
+            }
+        }
+
+        binding.activityToolbar.visibility = View.INVISIBLE
+        binding.viewPager.isUserInputEnabled = false
     }
 
-    override fun onDestroy() {
-        Log.e("DESTROY", "Researching")
-        super.onDestroy()
+    // Refresh favorite locations when coming back from CityItemActivity
+    override fun onResume() {
+        super.onResume()
+        forecastViewModel.getAllFavoriteLocations()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return false
     }
 }
